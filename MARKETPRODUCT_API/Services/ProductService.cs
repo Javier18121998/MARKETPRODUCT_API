@@ -3,42 +3,63 @@ using MARKETPRODUCT_API.Data;
 using MARKETPRODUCT_API.Messaging.MessageModels;
 using MARKETPRODUCT_API.Messaging.MessageProducer;
 using MARKETPRODUCT_API.Services.IServices;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks; 
 
 namespace MARKETPRODUCT_API.Services
 {
+    /// <summary>
+    /// Purpose: Manage the Products on a store
+    /// </summary>
     public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _context;
-        private readonly ProductMQProducer _producerMQ;
+        private readonly MQProducer _MQProducer;
 
-        public ProductService(ApplicationDbContext context, ProductMQProducer producerMQ)
+        public ProductService(ApplicationDbContext context, MQProducer mqProducer)
         {
             _context = context;
-            _producerMQ = producerMQ;
+            _MQProducer = mqProducer;
         }
 
-        public IEnumerable<Product> GetProducts()
+        /// <summary>
+        /// Fetch all products on the wall
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Product>> GetProductsAsync() 
         {
-            return _context.Products.ToList();
+            return await _context.Products.ToListAsync(); 
         }
 
-        public Product GetProduct(int id)
+        /// <summary>
+        /// Obtain every product by their Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Product> GetProductAsync(int id) 
         {
-            var product = _context.Products.Find(id);
-            _producerMQ.SendMessage(new LogMessage { 
+            var product = await _context.Products.FindAsync(id);
+            _MQProducer.SendMessage(new LogMessage
+            {
                 Action = "Geting the products",
-                ProductName = product.Name,
-                ProductPrice = product.Price,
+                ProductName = product?.Name,
+                ProductPrice = product?.Price,
                 Timestamp = DateTime.UtcNow
             });
-            if (product == null) return null;
             return product;
         }
 
-        public Product CreateProduct(Product newProduct)
+        /// <summary>
+        /// Create a Prodcut with: Id, Name, Price
+        /// </summary>
+        /// <param name="newProduct"></param>
+        /// <returns></returns>
+        public async Task<Product> CreateProductAsync(Product newProduct) 
         {
-            _context.Products.Add(newProduct);
-            _context.SaveChanges();
+            await _context.Products.AddAsync(newProduct); 
+            await _context.SaveChangesAsync(); 
 
             var logMessage = new LogMessage
             {
@@ -48,14 +69,21 @@ namespace MARKETPRODUCT_API.Services
                 Timestamp = DateTime.UtcNow
             };
 
-            _producerMQ.SendMessage(logMessage);
+            _MQProducer.SendMessage(logMessage);
 
             return newProduct;
         }
 
-        public void UpdateProduct(int id, Product updatedProduct)
+        /// <summary>
+        /// Updating in cost by their Id, and other elements of Product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatedProduct"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task UpdateProductAsync(int id, Product updatedProduct) 
         {
-            var product = _context.Products.Find(id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 throw new Exception("Product not found");
@@ -65,7 +93,7 @@ namespace MARKETPRODUCT_API.Services
             product.Price = updatedProduct.Price;
 
             _context.Products.Update(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync(); 
 
             var logMessage = new LogMessage
             {
@@ -75,19 +103,25 @@ namespace MARKETPRODUCT_API.Services
                 Timestamp = DateTime.UtcNow
             };
 
-            _producerMQ.SendMessage(logMessage);
+            _MQProducer.SendMessage(logMessage);
         }
 
-        public void DeleteProduct(int id)
+        /// <summary>
+        /// Delete the product with their Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task DeleteProductAsync(int id) 
         {
-            var product = _context.Products.Find(id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 throw new Exception("Product not found");
             }
 
             _context.Products.Remove(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync(); 
 
             var logMessage = new LogMessage
             {
@@ -97,7 +131,7 @@ namespace MARKETPRODUCT_API.Services
                 Timestamp = DateTime.UtcNow
             };
 
-            _producerMQ.SendMessage(logMessage);
+            _MQProducer.SendMessage(logMessage);
         }
     }
 }

@@ -1,13 +1,15 @@
 ﻿using MARKETPRODUCT_API.Data.EFModels;
+using System.Collections.Generic;
+using System.Threading.Tasks; 
 
 namespace MARKETPRODUCT_API.Services.IServices
 {
     public interface IProductService
     {
-        IEnumerable<Product> GetProducts();
-        Product GetProduct(int id);
-        Product CreateProduct(Product newProduct);
-        void UpdateProduct(int id, Product updatedProduct);
-        void DeleteProduct(int id);
+        Task<IEnumerable<Product>> GetProductsAsync(); 
+        Task<Product> GetProductAsync(int id); 
+        Task<Product> CreateProductAsync(Product newProduct);
+        Task UpdateProductAsync(int id, Product updatedProduct);
+        Task DeleteProductAsync(int id); 
     }
 }

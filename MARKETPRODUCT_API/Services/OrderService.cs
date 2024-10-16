@@ -5,27 +5,39 @@ using Microsoft.EntityFrameworkCore;
 using MARKETPRODUCT_API.Services.IServices;
 using MARKETPRODUCT_API.Messaging.MessageProducer;
 using MARKETPRODUCT_API.Messaging.MessageModels;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks; 
 
 namespace MARKETPRODUCT_API.Services
 {
-    public class OrderService: IOrderService
+    /// <summary>
+    /// This service cordinates the operations into an Order
+    /// </summary>
+    public class OrderService : IOrderService
     {
         private readonly ApplicationDbContext _context;
-        private readonly OrderMQProducer _orderMQProducer;
+        private readonly MQProducer _MQProducer;
 
-        public OrderService(ApplicationDbContext context, OrderMQProducer orderMQProducer)
+        public OrderService(ApplicationDbContext context, MQProducer MQProducer)
         {
             _context = context;
-            _orderMQProducer = orderMQProducer;
+            _MQProducer = MQProducer;
         }
 
-        public OrderDto CreateOrder(CreateOrderDto createOrderDto)
+        /// <summary>
+        /// This operation creates the order per product Id and quantity by a CreateOrderDto with many Items
+        /// </summary>
+        /// <param name="createOrderDto"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<OrderDto> CreateOrderAsync(CreateOrderDto createOrderDto) 
         {
             var order = new Order();
 
             foreach (var itemDto in createOrderDto.Items)
             {
-                var product = _context.Products.Find(itemDto.ProductId);
+                var product = await _context.Products.FindAsync(itemDto.ProductId);
                 if (product == null)
                 {
                     throw new Exception($"Product with ID {itemDto.ProductId} not found");
@@ -40,8 +52,8 @@ namespace MARKETPRODUCT_API.Services
                 order.Items.Add(orderItem);
             }
 
-            _context.Orders.Add(order);
-            _context.SaveChanges();
+            await _context.Orders.AddAsync(order); 
+            await _context.SaveChangesAsync(); 
 
             var orderCreated = new OrderDto
             {
@@ -55,7 +67,8 @@ namespace MARKETPRODUCT_API.Services
                     Quantity = oi.Quantity
                 }).ToList()
             };
-            _orderMQProducer.SendMessage(new OrderServiceMessage
+
+            _MQProducer.SendMessage(new OrderServiceMessage
             {
                 Id = order.Id,
                 CreationDate = DateTime.UtcNow,
@@ -63,12 +76,20 @@ namespace MARKETPRODUCT_API.Services
                 ProductName = orderCreated.Items.First().ProductName,
                 Quantity = orderCreated.Items.First().Quantity.ToString()
             });
+
             return orderCreated;
         }
 
-        public OrderDto GetOrderById(int id)
+        /// <summary>
+        /// This operation will get all the Orders by their Id in case 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<OrderDto> GetOrderByIdAsync(int id) 
         {
-            var order = _context.Orders.Include(o => o.Items).ThenInclude(oi => oi.Product).FirstOrDefault(o => o.Id == id);
+            var order = await _context.Orders.Include(o => o.Items).ThenInclude(oi => oi.Product)
+                                               .FirstOrDefaultAsync(o => o.Id == id);
             if (order == null)
             {
                 throw new Exception($"Order with ID {id} not found");
@@ -88,9 +109,13 @@ namespace MARKETPRODUCT_API.Services
             };
         }
 
-        public IEnumerable<OrderDto> GetAllOrders()
+        /// <summary>
+        /// This operation manage the fetch of all Orders
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync()
         {
-            return _context.Orders
+            return await _context.Orders
                 .Include(o => o.Items)
                 .ThenInclude(oi => oi.Product)
                 .Select(order => new OrderDto
@@ -104,19 +129,25 @@ namespace MARKETPRODUCT_API.Services
                         ProductPrice = oi.Product.Price,
                         Quantity = oi.Quantity
                     }).ToList()
-                }).ToList();
+                }).ToListAsync();
         }
 
-        public void DeleteOrder(int id)
+        /// <summary>
+        /// This operation delete in cost an Order by their Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task DeleteOrderAsync(int id) 
         {
-            var order = _context.Orders.Find(id);
+            var order = await _context.Orders.FindAsync(id); 
             if (order == null)
             {
                 throw new Exception($"Order with ID {id} not found");
             }
 
             _context.Orders.Remove(order);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync(); 
         }
     }
 }

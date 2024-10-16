@@ -18,13 +18,11 @@ namespace MARKETPRODUCT_API.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurar la relación uno a muchos entre Order y OrderItem
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.Items)
                 .WithOne(oi => oi.Order)
                 .HasForeignKey(oi => oi.OrderId);
 
-            // Configurar la relación uno a muchos entre Product y OrderItem
             modelBuilder.Entity<Product>()
                 .HasMany<OrderItem>()
                 .WithOne(oi => oi.Product)
