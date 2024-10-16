@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MARKETPRODUCT_API.MARKETUtilities;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
 
@@ -13,15 +14,15 @@ namespace MARKETPRODUCT_API.Messaging.MessageProducer
         {
             var factory = new ConnectionFactory()
             {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "guest"
+                HostName = MarketUtilities.SpaceName,
+                UserName = MarketUtilities.UserName,
+                Password = MarketUtilities.UserPassword,
             };
 
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
-            _channel.QueueDeclare(queue: "logs_queue",
+            _channel.QueueDeclare(queue: MarketUtilities.LogsQueue,
                                   durable: true,
                                   exclusive: false,
                                   autoDelete: false,
@@ -34,7 +35,7 @@ namespace MARKETPRODUCT_API.Messaging.MessageProducer
             var body = Encoding.UTF8.GetBytes(jsonMessage);
 
             _channel.BasicPublish(exchange: "",
-                                  routingKey: "logs_queue",
+                                  routingKey: MarketUtilities.LogsQueue,
                                   basicProperties: null,
                                   body: body);
             Console.WriteLine($"[x] Mensaje enviado: {jsonMessage}");
