@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MARKETPRODUCT_API.Services.IServices;
 using MARKETPRODUCT_API.Services;
 using MARKETPRODUCT_API.Messaging.MessageProducer;
+using MARKETPRODUCT_API.MARKETUtilities;
 
 namespace MARKETPRODUCT_API
 {
@@ -21,10 +22,15 @@ namespace MARKETPRODUCT_API
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "PedidoAPI", Version = "v1" });
+                c.SwaggerDoc(MarketUtilities.CurrentVersion, new OpenApiInfo 
+                { 
+                    Title = MarketUtilities.PedidoAPI, 
+                    Version = MarketUtilities.CurrentVersion,
+                    Description = MarketUtilities.SwaggerDocDescription                                        
+                });
             });
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
             );
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductService, ProductService>();
@@ -38,7 +44,7 @@ namespace MARKETPRODUCT_API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PedidoAPI v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint(MarketUtilities.SwaggerUrlEndpoint, MarketUtilities.SwaggerNameEndpoint));
             }
 
             app.UseRouting();
