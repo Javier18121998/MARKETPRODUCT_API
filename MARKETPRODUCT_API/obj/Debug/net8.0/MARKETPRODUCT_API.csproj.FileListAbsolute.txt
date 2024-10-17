@@ -78,3 +78,5 @@ C:\Users\javie\source\repos\MARKETPRODUCT_API\MARKETPRODUCT_API\bin\Debug\net8.0
 C:\Users\javie\source\repos\MARKETPRODUCT_API\MARKETPRODUCT_API\bin\Debug\net8.0\RabbitMQ.Client.dll
 C:\Users\javie\source\repos\MARKETPRODUCT_API\MARKETPRODUCT_API\obj\Debug\net8.0\MARKETPRODUCT_API.sourcelink.json
 C:\Users\javie\source\repos\MARKETPRODUCT_API\MARKETPRODUCT_API\bin\Debug\net8.0\Swashbuckle.AspNetCore.Annotations.dll
+C:\Users\javie\source\repos\MARKETPRODUCT_API\MARKETPRODUCT_API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\javie\source\repos\MARKETPRODUCT_API\MARKETPRODUCT_API\bin\Debug\net8.0\Microsoft.Bcl.TimeProvider.dll

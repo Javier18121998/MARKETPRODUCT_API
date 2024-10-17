@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net;
 using MARKETPRODUCT_API.Controllers.Utilities;
 using MARKETPRODUCT_API.Data.ModelValidations.IDataModelValidations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MARKETPRODUCT_API.Controllers
 {
@@ -31,6 +32,7 @@ namespace MARKETPRODUCT_API.Controllers
         /// Fetch all available products.
         /// </summary>
         /// <returns>A list of all products.</returns>
+        [Authorize]
         [HttpGet]
         [SwaggerOperation(
             Summary = "Obtener todos los productos",
@@ -50,6 +52,7 @@ namespace MARKETPRODUCT_API.Controllers
         /// </summary>
         /// <param name="id">The ID of the product to retrieve.</param>
         /// <returns>The product matching the specified ID.</returns>
+        [Authorize]
         [HttpGet("{id}")]
         [SwaggerOperation(
             Summary = "Obtener un producto por ID",
@@ -81,6 +84,7 @@ namespace MARKETPRODUCT_API.Controllers
         /// </summary>
         /// <param name="newProduct">The product details to create.</param>
         /// <returns>The created product.</returns>
+        [Authorize]
         [HttpPost]
         [SwaggerOperation(
             Summary = "Crear un nuevo producto",
@@ -118,6 +122,7 @@ namespace MARKETPRODUCT_API.Controllers
         /// <param name="id">The ID of the product to update.</param>
         /// <param name="updatedProduct">The updated product details.</param>
         /// <returns>No content if the update was successful.</returns>
+        [Authorize]
         [HttpPut("{id}")]
         [SwaggerOperation(
             Summary = "Actualizar un producto existente",
@@ -162,6 +167,7 @@ namespace MARKETPRODUCT_API.Controllers
         /// </summary>
         /// <param name="id">The ID of the product to delete.</param>
         /// <returns>No content if the deletion was successful.</returns>
+        [Authorize]
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Eliminar un producto por ID",

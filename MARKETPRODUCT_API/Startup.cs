@@ -7,6 +7,9 @@ using MARKETPRODUCT_API.Messaging.MessageProducer;
 using MARKETPRODUCT_API.MARKETUtilities;
 using MARKETPRODUCT_API.Data.ModelValidations.IDataModelValidations;
 using MARKETPRODUCT_API.Data.ModelValidations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MARKETPRODUCT_API
 {
@@ -41,7 +44,32 @@ namespace MARKETPRODUCT_API
         {
             services.AddControllers(); // Adds MVC services to the application.
 
-            // Configures Swagger for API documentation generation.
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"], // El emisor del token (Issuer)
+                    ValidAudience = Configuration["Jwt:Audience"], // El público objetivo (Audience)
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) // Llave secreta para validar el token
+                };
+            });
+
+            // Agrega autorización
+            services.AddAuthorization(options =>
+            {
+                // Puedes configurar políticas de autorización personalizadas si lo necesitas
+            });
+
+            // Configura Swagger para que soporte autenticación JWT
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(MarketUtilities.CurrentVersion, new OpenApiInfo
@@ -51,6 +79,33 @@ namespace MARKETPRODUCT_API
                     Description = MarketUtilities.SwaggerDocDescription
                 });
                 c.EnableAnnotations(); // Enables annotations for better Swagger UI customization.
+
+                // Definición del esquema de seguridad para JWT (Bearer Token)
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Ingrese 'Bearer' seguido de su token JWT en el campo de texto. Ejemplo: 'Bearer abc123def456'"
+                });
+
+                // Requerimiento de seguridad para aplicar Bearer Token en los endpoints protegidos
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
             });
 
             // Configures the Entity Framework DbContext with SQL Server.
@@ -62,6 +117,7 @@ namespace MARKETPRODUCT_API
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IProductModelValidations, ProductModelValidations>();
+            services.AddScoped<IOrderModelValidations, OrderModelValidations>();
             services.AddSingleton<MQProducer>(); // Registers the message queue producer as a singleton.
         }
 
@@ -82,6 +138,9 @@ namespace MARKETPRODUCT_API
             }
 
             app.UseRouting(); // Enables routing capabilities for the app.
+
+            app.UseAuthentication(); // Asegura que las solicitudes sean autenticadas
+            app.UseAuthorization();
 
             // Configures the endpoints for the controllers.
             app.UseEndpoints(endpoints =>
