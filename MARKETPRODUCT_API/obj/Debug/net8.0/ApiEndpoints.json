@@ -1,5 +1,21 @@
 [
   {
+    "ContainingType": "MARKETPRODUCT_API.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userLogin",
+        "Type": "MARKETPRODUCT_API.Controllers.UserLogin",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "MARKETPRODUCT_API.Controllers.PedidoController",
     "Method": "GetPedidos",
     "RelativePath": "api/Pedido",
@@ -175,6 +191,11 @@
       {
         "Type": "System.Void",
         "MediaTypes": [],
+        "StatusCode": 400
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
         "StatusCode": 500
       }
     ]
@@ -202,6 +223,11 @@
           "text/json"
         ],
         "StatusCode": 200
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 400
       }
     ]
   },
@@ -238,6 +264,11 @@
       {
         "Type": "System.Void",
         "MediaTypes": [],
+        "StatusCode": 400
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
         "StatusCode": 500
       }
     ]
@@ -266,6 +297,11 @@
         "Type": "System.Void",
         "MediaTypes": [],
         "StatusCode": 404
+      },
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 400
       }
     ]
   }

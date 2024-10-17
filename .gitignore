@@ -1,0 +1,59 @@
+# Archivos y carpetas generados por Visual Studio
+.vs/
+.vscode/
+
+# Archivos de compilación
+bin/
+obj/
+
+# Archivos generados por la construcción del proyecto
+*.exe
+*.pdb
+*.cache
+*.log
+*.user
+*.csproj.user
+*.suo
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+
+# Archivos de configuración específicos de usuario
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de Visual Studio
+.vscode/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de compilación
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Configuración de diseño y metadatos de Visual Studio
+*.dbtcache
+*.futdcache
+*.v17
+
+# Archivos de caché y otros generados
+*.log
+*.tmp
+*.cache
+
+# Archivos específicos de la evaluación del proyecto
+marketproduct_api.metadata.v9.bin
+marketproduct_api.projects.v9.bin
+
+# Archivos generados por MSBuild
+*.AssemblyInfoInputs.cache
+*.AssemblyInfo.cs
