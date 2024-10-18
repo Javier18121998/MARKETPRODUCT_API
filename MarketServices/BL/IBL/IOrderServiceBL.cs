@@ -10,36 +10,89 @@ namespace Market.BL.IBL
 {
     public interface IOrderServiceBL
     {
-        // Crear una nueva orden por medio del nombre y tamaño del producto
+        /// <summary>
+        /// Creates a new order by the product's name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <param name="quantity">The quantity of the product.</param>
+        /// <returns>The created order.</returns>
         Task<OrderDto> CreateOrderByProductNameAndSizeAsync(string productName, string productSize, int quantity);
-        // Crear una nueva orden por ID del producto
+
+        /// <summary>
+        /// Creates a new order by the product ID.
+        /// </summary>
+        /// <param name="productId">The ID of the product.</param>
+        /// <param name="quantity">The quantity of the product.</param>
+        /// <returns>The created order.</returns>
         Task<OrderDto> CreateOrderByProductIdAsync(int productId, int quantity);
 
-        // Actualizar cantidad de una orden por ID de la orden
+        /// <summary>
+        /// Updates the quantity of an order by the order ID.
+        /// </summary>
+        /// <param name="id">The ID of the order to update.</param>
+        /// <param name="newQuantity">The new quantity for the order.</param>
+        /// <returns></returns>
         Task UpdateOrderQuantityByIdAsync(int id, int newQuantity);
 
-        // Actualizar cantidad de una orden por ID del producto
+        /// <summary>
+        /// Updates the quantity of an order by the product ID.
+        /// </summary>
+        /// <param name="productId">The ID of the product associated with the order.</param>
+        /// <param name="newQuantity">The new quantity for the order.</param>
+        /// <returns></returns>
         Task UpdateOrderQuantityByProductIdAsync(int productId, int newQuantity);
 
-        // Actualizar cantidad de una orden por nombre y tamaño del producto
+        /// <summary>
+        /// Updates the quantity of an order by the product's name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <param name="newQuantity">The new quantity for the order.</param>
+        /// <returns></returns>
         Task UpdateOrderQuantityByProductNameAndSizeAsync(string productName, string productSize, int newQuantity);
 
-        // Eliminar una orden por ID
+        /// <summary>
+        /// Deletes an order by the order ID.
+        /// </summary>
+        /// <param name="id">The ID of the order to delete.</param>
+        /// <returns></returns>
         Task DeleteOrderByIdAsync(int id);
 
-        // Eliminar una orden por ID del producto
+        /// <summary>
+        /// Deletes an order by the product ID.
+        /// </summary>
+        /// <param name="productId">The ID of the product associated with the order.</param>
+        /// <returns></returns>
         Task DeleteOrderByProductIdAsync(int productId);
 
-        // Eliminar una orden por nombre y tamaño del producto
+        /// <summary>
+        /// Deletes an order by the product's name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <returns></returns>
         Task DeleteOrderByProductNameAndSizeAsync(string productName, string productSize);
 
-        // Obtener todas las órdenes
+        /// <summary>
+        /// Retrieves all orders.
+        /// </summary>
+        /// <returns>A list of all orders.</returns>
         Task<List<OrderDto>> GetAllOrdersAsync();
 
-        // Obtener una orden por ID
+        /// <summary>
+        /// Retrieves an order by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the order to retrieve.</param>
+        /// <returns>The corresponding order.</returns>
         Task<OrderDto> GetOrderByIdAsync(int id);
 
-        // Obtener una orden por nombre y tamaño del producto
+        /// <summary>
+        /// Retrieves an order by the product's name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <returns>The corresponding order.</returns>
         Task<OrderDto> GetOrderByProductNameAndSizeAsync(string productName, string productSize);
     }
 }

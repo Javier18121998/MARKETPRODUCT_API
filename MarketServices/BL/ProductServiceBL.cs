@@ -13,23 +13,34 @@ namespace Market.BL
     public class ProductServiceBL : IProductServiceBL
     {
         private readonly IProductService _productService;
+
         public ProductServiceBL(IProductService productService)
         {
             _productService = productService;
         }
+
+        /// <summary>
+        /// Creates a new product.
+        /// </summary>
+        /// <param name="product">The product to create.</param>
+        /// <returns>The created product DTO.</returns>
         public async Task<ProductDto> CreateProductAsync(Product product)
         {
             try
             {
-                var productCreated =await _productService.CreateProductAsync(product);
+                var productCreated = await _productService.CreateProductAsync(product);
                 return productCreated;
             }
             catch (Exception ex)
             {
-                throw new Exception();
+                throw new Exception(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Deletes a product by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the product to delete.</param>
         public async Task DeleteProductByIdAsync(int id)
         {
             try
@@ -37,23 +48,32 @@ namespace Market.BL
                 await _productService.DeleteProductByIdAsync(id);
             }
             catch (Exception ex)
-            { 
+            {
                 throw new Exception(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Deletes a product by its name and size.
+        /// </summary>
+        /// <param name="name">The name of the product to delete.</param>
+        /// <param name="size">The size of the product to delete.</param>
         public async Task DeleteProductByNameAndSizeAsync(string name, string size)
         {
             try
             {
                 await _productService.DeleteProductByNameAndSizeAsync(name, size);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Retrieves all products.
+        /// </summary>
+        /// <returns>A collection of product DTOs.</returns>
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
             try
@@ -61,12 +81,17 @@ namespace Market.BL
                 var products = await _productService.GetAllProductsAsync();
                 return products;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Retrieves a product by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the product to retrieve.</param>
+        /// <returns>The corresponding product DTO.</returns>
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
             try
@@ -80,6 +105,12 @@ namespace Market.BL
             }
         }
 
+        /// <summary>
+        /// Retrieves a product by its name and size.
+        /// </summary>
+        /// <param name="name">The name of the product to retrieve.</param>
+        /// <param name="size">The size of the product to retrieve.</param>
+        /// <returns>The corresponding product DTO.</returns>
         public async Task<ProductDto> GetProductByNameAndSizeAsync(string name, string size)
         {
             try
@@ -93,6 +124,11 @@ namespace Market.BL
             }
         }
 
+        /// <summary>
+        /// Updates the description of a product by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the product to update.</param>
+        /// <param name="newDescription">The new description for the product.</param>
         public async Task UpdateDescriptionByIdAsync(int id, string newDescription)
         {
             try
@@ -105,10 +141,16 @@ namespace Market.BL
             }
         }
 
+        /// <summary>
+        /// Updates the description of a product by its name and size.
+        /// </summary>
+        /// <param name="name">The name of the product to update.</param>
+        /// <param name="size">The size of the product to update.</param>
+        /// <param name="newDescription">The new description for the product.</param>
         public async Task UpdateDescriptionByNameAndSizeAsync(string name, string size, string newDescription)
         {
             try
-            { 
+            {
                 await _productService.UpdateDescriptionByNameAndSizeAsync(name, size, newDescription);
             }
             catch (Exception ex)
