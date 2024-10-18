@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Wafo/oKa2Vs=",
+  "dgSpecHash": "H8G15nSi9xA=",
   "success": true,
-  "projectFilePath": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\MARKETPRODUCT_API\\MARKETPRODUCT_API.csproj",
+  "projectFilePath": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\MARKETPRODUCT_API\\Market.Services.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\javie\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\javie\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

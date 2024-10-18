@@ -1,8 +1,8 @@
 {
   "Version": 1,
-  "Hash": "ARZMx0Ex692T46iec7p8yOUc8FVjS3g2RSGeDUNEI2s=",
-  "Source": "MARKETPRODUCT_API",
-  "BasePath": "_content/MARKETPRODUCT_API",
+  "Hash": "q2T344/bsSJa1eYH62VbElTWNiYpTmkol8XYczmzSvA=",
+  "Source": "Market.Services",
+  "BasePath": "_content/Market.Services",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],

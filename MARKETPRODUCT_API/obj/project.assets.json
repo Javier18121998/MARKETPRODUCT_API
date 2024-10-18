@@ -3125,9 +3125,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\MARKETPRODUCT_API\\MARKETPRODUCT_API.csproj",
-      "projectName": "MARKETPRODUCT_API",
-      "projectPath": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\MARKETPRODUCT_API\\MARKETPRODUCT_API.csproj",
+      "projectUniqueName": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\MARKETPRODUCT_API\\Market.Services.csproj",
+      "projectName": "Market.Services",
+      "projectPath": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\MARKETPRODUCT_API\\Market.Services.csproj",
       "packagesPath": "C:\\Users\\javie\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\MARKETPRODUCT_API\\obj\\",
       "projectStyle": "PackageReference",
