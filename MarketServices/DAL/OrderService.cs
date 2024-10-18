@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Market.DAL
 {
+    /// <summary>
+    /// Produce the service Data Acces LAyer into Orders Management.
+    /// </summary>
     public class OrderService : IOrderService
     {
         private readonly MarketDbContext _context;
@@ -21,21 +24,25 @@ namespace Market.DAL
             _orderValidationService = orderValidationService;
         }
 
-        // Crear una nueva orden
+        /// <summary>
+        /// Creates a new order based on the product name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <param name="quantity">The quantity to order.</param>
+        /// <returns>The created order.</returns>
         public async Task<OrderDto> CreateOrderByProductNameAndSizeAsync(string productName, string productSize, int quantity)
         {
-            // Buscar el producto en la base de datos por su nombre y tamaño
             var product = await _context.Products.FirstOrDefaultAsync(
-                p => p.ProductName == productName && 
+                p => p.ProductName == productName &&
                 p.ProductSize == productSize
             );
 
             if (product == null)
             {
-                throw new Exception("El producto con el nombre y tamaño especificado no existe.");
+                throw new Exception("The product with the specified name and size does not exist.");
             }
 
-            // Crear la orden con el ID del producto y la cantidad
             var order = new OrderDto
             {
                 ProductId = product.Id,
@@ -43,24 +50,26 @@ namespace Market.DAL
                 CreateOrder = DateTime.UtcNow
             };
 
-            // Agregar la orden a la base de datos
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
             return order;
         }
 
-        // Crear una nueva orden por ID del producto
+        /// <summary>
+        /// Creates a new order based on the product ID.
+        /// </summary>
+        /// <param name="productId">The ID of the product.</param>
+        /// <param name="quantity">The quantity to order.</param>
+        /// <returns>The created order.</returns>
         public async Task<OrderDto> CreateOrderByProductIdAsync(int productId, int quantity)
         {
-            // Validar si el producto existe por su ID
             var product = await _context.Products.FindAsync(productId);
             if (product == null)
             {
-                throw new Exception("El producto con el ID especificado no existe.");
+                throw new Exception("The product with the specified ID does not exist.");
             }
 
-            // Crear la orden con el ID del producto y la cantidad
             var order = new OrderDto
             {
                 ProductId = productId,
@@ -68,14 +77,18 @@ namespace Market.DAL
                 CreateOrder = DateTime.UtcNow
             };
 
-            // Agregar la orden a la base de datos
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
             return order;
         }
 
-        // Actualizar cantidad de una orden por ID de la orden
+        /// <summary>
+        /// Updates the quantity of an order by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the order.</param>
+        /// <param name="newQuantity">The new quantity.</param>
+        /// <returns></returns>
         public async Task UpdateOrderQuantityByIdAsync(int id, int newQuantity)
         {
             if (await _orderValidationService.OrderExistsByIdAsync(id))
@@ -90,11 +103,16 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("La orden con el ID especificado no existe.");
+                throw new Exception("The order with the specified ID does not exist.");
             }
         }
 
-        // Actualizar cantidad de una orden por ID del producto
+        /// <summary>
+        /// Updates the quantity of an order by the product ID.
+        /// </summary>
+        /// <param name="productId">The ID of the product.</param>
+        /// <param name="newQuantity">The new quantity.</param>
+        /// <returns></returns>
         public async Task UpdateOrderQuantityByProductIdAsync(int productId, int newQuantity)
         {
             if (await _orderValidationService.OrderExistsByProductIdAsync(productId))
@@ -109,20 +127,23 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("La orden con el ID del producto especificado no existe.");
+                throw new Exception("The order with the specified product ID does not exist.");
             }
         }
 
-        // Actualizar cantidad de una orden por nombre y tamaño del producto
-        public async Task UpdateOrderQuantityByProductNameAndSizeAsync(
-            string productName, 
-            string productSize, 
-            int newQuantity)
+        /// <summary>
+        /// Updates the quantity of an order by the product name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <param name="newQuantity">The new quantity.</param>
+        /// <returns></returns>
+        public async Task UpdateOrderQuantityByProductNameAndSizeAsync(string productName, string productSize, int newQuantity)
         {
             if (await _orderValidationService.OrderExistsByProductNameAndSizeAsync(productName, productSize))
             {
-                var order = await _context.Orders.FirstOrDefaultAsync(o => 
-                    o.Product.ProductName == productName && 
+                var order = await _context.Orders.FirstOrDefaultAsync(o =>
+                    o.Product.ProductName == productName &&
                     o.Product.ProductSize == productSize
                 );
                 if (order != null)
@@ -134,11 +155,15 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("La orden con el nombre y tamaño del producto especificado no existe.");
+                throw new Exception("The order with the specified product name and size does not exist.");
             }
         }
 
-        // Eliminar una orden por ID
+        /// <summary>
+        /// Deletes an order by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the order.</param>
+        /// <returns></returns>
         public async Task DeleteOrderByIdAsync(int id)
         {
             if (await _orderValidationService.OrderExistsByIdAsync(id))
@@ -149,11 +174,15 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("La orden con el ID especificado no existe.");
+                throw new Exception("The order with the specified ID does not exist.");
             }
         }
 
-        // Eliminar una orden por ID del producto
+        /// <summary>
+        /// Deletes an order by the product ID.
+        /// </summary>
+        /// <param name="productId">The ID of the product.</param>
+        /// <returns></returns>
         public async Task DeleteOrderByProductIdAsync(int productId)
         {
             if (await _orderValidationService.OrderExistsByProductIdAsync(productId))
@@ -164,17 +193,22 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("La orden con el ID del producto especificado no existe.");
+                throw new Exception("The order with the specified product ID does not exist.");
             }
         }
 
-        // Eliminar una orden por nombre y tamaño del producto
+        /// <summary>
+        /// Deletes an order by the product name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <returns></returns>
         public async Task DeleteOrderByProductNameAndSizeAsync(string productName, string productSize)
         {
             if (await _orderValidationService.OrderExistsByProductNameAndSizeAsync(productName, productSize))
             {
-                var order = await _context.Orders.FirstOrDefaultAsync(o => 
-                    o.Product.ProductName == productName && 
+                var order = await _context.Orders.FirstOrDefaultAsync(o =>
+                    o.Product.ProductName == productName &&
                     o.Product.ProductSize == productSize
                 );
                 _context.Orders.Remove(order);
@@ -182,28 +216,40 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("La orden con el nombre y tamaño del producto especificado no existe.");
+                throw new Exception("The order with the specified product name and size does not exist.");
             }
         }
 
-        // Obtener todas las órdenes
+        /// <summary>
+        /// Retrieves all orders.
+        /// </summary>
+        /// <returns>A list of orders.</returns>
         public async Task<List<OrderDto>> GetAllOrdersAsync()
         {
             return await _context.Orders.Include(o => o.Product).ToListAsync();
         }
 
-        // Obtener una orden por ID
+        /// <summary>
+        /// Retrieves an order by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the order.</param>
+        /// <returns>The corresponding order.</returns>
         public async Task<OrderDto> GetOrderByIdAsync(int id)
         {
             return await _context.Orders.Include(o => o.Product)
                                         .FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        // Obtener una orden por nombre y tamaño del producto
+        /// <summary>
+        /// Retrieves an order by the product name and size.
+        /// </summary>
+        /// <param name="productName">The name of the product.</param>
+        /// <param name="productSize">The size of the product.</param>
+        /// <returns>The corresponding order.</returns>
         public async Task<OrderDto> GetOrderByProductNameAndSizeAsync(string productName, string productSize)
         {
-            return await _context.Orders.Include(o => o.Product).FirstOrDefaultAsync(o => 
-                o.Product.ProductName == productName && 
+            return await _context.Orders.Include(o => o.Product).FirstOrDefaultAsync(o =>
+                o.Product.ProductName == productName &&
                 o.Product.ProductSize == productSize
             );
         }
