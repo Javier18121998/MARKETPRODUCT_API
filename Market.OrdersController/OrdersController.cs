@@ -8,6 +8,9 @@ using System.Net;
 
 namespace Market.OrdersController
 {
+    /// <summary>
+    /// Controll all the orders and Manage their behaviors via MarketProductControllerBase route
+    /// </summary>
     public class OrdersController : MarketProductControllerBase<OrdersController>
     {
         private readonly IOrderServiceBL _orderServiceBL;
@@ -18,7 +21,11 @@ namespace Market.OrdersController
             _orderServiceBL = orderServiceBL;
         }
 
-        // 1. Crear una nueva orden por medio del nombre y tamaño del producto
+        /// <summary>
+        /// 1. Create an Order using the Name and Size of the product.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("CreateByNameAndSize")]
         [SwaggerOperation(
             Summary = "Crear una Orden",
@@ -39,7 +46,11 @@ namespace Market.OrdersController
             }
         }
 
-        // 2. Crear una nueva orden por ID del producto
+        /// <summary>
+        /// 2. Create an Order via the Id of the product.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("CreateById")]
         [SwaggerOperation(
             Summary = "Crear una Orden",
@@ -60,7 +71,12 @@ namespace Market.OrdersController
             }
         }
 
-        // 3. Actualizar cantidad de una orden por ID de la orden
+        /// <summary>
+        /// 3. Modify the Order with Id Order.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut("UpdateQuantityById/{id}")]
         [SwaggerOperation(
             Summary = "Modificar una Orden",
@@ -81,7 +97,12 @@ namespace Market.OrdersController
             }
         }
 
-        // 4. Actualizar cantidad de una orden por ID del producto
+        /// <summary>
+        /// 4. Update the order via ProductId in their Quaantity.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut("UpdateQuantityByProductId/{productId}")]
         [SwaggerOperation(
             Summary = "Modificar una Orden",
@@ -102,7 +123,11 @@ namespace Market.OrdersController
             }
         }
 
-        // 5. Actualizar cantidad de una orden por nombre y tamaño del producto
+        /// <summary>
+        /// 5. Modify the Order via Name of the PRoduct and Product Size in their Quantity.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut("UpdateQuantityByNameAndSize")]
         [SwaggerOperation(
             Summary = "Modificar una Orden",
@@ -123,7 +148,11 @@ namespace Market.OrdersController
             }
         }
 
-        // 6. Eliminar una orden por ID
+        /// <summary>
+        /// 6. Delete an Order via their Id Order.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("DeleteById/{id}")]
         [SwaggerOperation(
             Summary = "Eliminar una Orden.",
@@ -144,7 +173,11 @@ namespace Market.OrdersController
             }
         }
 
-        // 7. Eliminar una orden por ID del producto
+        /// <summary>
+        /// 7. Dismisnis an Order via their ProductId.
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         [HttpDelete("DeleteByProductId/{productId}")]
         [SwaggerOperation(
             Summary = "Eliminar una Orden.",
@@ -165,7 +198,11 @@ namespace Market.OrdersController
             }
         }
 
-        // 8. Eliminar una orden por nombre y tamaño del producto
+        /// <summary>
+        /// 8. Delete an Order via Product Name and their Size.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpDelete("DeleteByNameAndSize")]
         [SwaggerOperation(
             Summary = "Eliminar una Orden.",
@@ -186,7 +223,10 @@ namespace Market.OrdersController
             }
         }
 
-        // 9. Obtener todas las órdenes
+        /// <summary>
+        /// 9. Get all the Orders.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetAll")]
         [SwaggerOperation(
             Summary = "Obtener todas las Ordenes.",
@@ -207,7 +247,11 @@ namespace Market.OrdersController
             }
         }
 
-        // 10. Obtener una orden por ID
+        /// <summary>
+        /// 10. Obtain an Order via Id Order.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("GetById/{id}")]
         [SwaggerOperation(
             Summary = "Obtener una Orden",
@@ -232,7 +276,12 @@ namespace Market.OrdersController
             }
         }
 
-        // 11. Obtener una orden por nombre y tamaño del producto
+        /// <summary>
+        /// 11. Obtain an Order via Product Name and Size.
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="productSize"></param>
+        /// <returns></returns>
         [HttpGet("GetByNameAndSize")]
         [SwaggerOperation(
             Summary = "Obtener una Orden",
