@@ -29,6 +29,8 @@ namespace Market.BL
             try
             {
                 var productCreated = await _productService.CreateProductAsync(product);
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return productCreated;
             }
             catch (Exception ex)
@@ -45,6 +47,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _productService.DeleteProductByIdAsync(id);
             }
             catch (Exception ex)
@@ -62,6 +66,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _productService.DeleteProductByNameAndSizeAsync(name, size);
             }
             catch (Exception ex)
@@ -79,6 +85,8 @@ namespace Market.BL
             try
             {
                 var products = await _productService.GetAllProductsAsync();
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return products;
             }
             catch (Exception ex)
@@ -97,6 +105,8 @@ namespace Market.BL
             try
             {
                 var product = await _productService.GetProductByIdAsync(id);
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return product;
             }
             catch (Exception ex)
@@ -116,6 +126,8 @@ namespace Market.BL
             try
             {
                 var productByNameAndSize = await _productService.GetProductByNameAndSizeAsync(name, size);
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return productByNameAndSize;
             }
             catch (Exception ex)
@@ -133,6 +145,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _productService.UpdateDescriptionByIdAsync(id, newDescription);
             }
             catch (Exception ex)
@@ -151,6 +165,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _productService.UpdateDescriptionByNameAndSizeAsync(name, size, newDescription);
             }
             catch (Exception ex)

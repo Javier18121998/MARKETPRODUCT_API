@@ -25,7 +25,7 @@ namespace Market.DAL
         }
         public async Task<bool> OrderExistsByProductNameAndSizeAsync(string productName, string productSize)
         {
-            return await _context.Orders.AnyAsync(o => o.Product.Name == productName && o.Product.Size == productSize);
+            return await _context.Orders.AnyAsync(o => o.Product.ProductName == productName && o.Product.ProductSize == productSize);
         }
     }
 }

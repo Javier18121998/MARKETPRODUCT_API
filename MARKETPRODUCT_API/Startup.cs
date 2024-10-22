@@ -10,6 +10,7 @@ using MARKETPRODUCT_API.Data.ModelValidations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+//using Market.Market.Models;
 
 namespace MARKETPRODUCT_API
 {
@@ -112,6 +113,10 @@ namespace MARKETPRODUCT_API
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
             );
+
+            //services.AddDbContext<MarketDbContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
+            //);
 
             // Registers application services with their interfaces.
             services.AddScoped<IOrderService, OrderService>();

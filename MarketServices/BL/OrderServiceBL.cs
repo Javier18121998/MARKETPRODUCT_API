@@ -30,6 +30,8 @@ namespace Market.BL
             try
             {
                 var product = await _orderService.CreateOrderByProductIdAsync(productId, quantity);
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return product;
             }
             catch (Exception ex)
@@ -50,6 +52,8 @@ namespace Market.BL
             try
             {
                 var productCreated = await _orderService.CreateOrderByProductNameAndSizeAsync(productName, productSize, quantity);
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return productCreated;
             }
             catch (Exception ex)
@@ -66,6 +70,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _orderService.DeleteOrderByIdAsync(id);
             }
             catch (Exception ex)
@@ -82,6 +88,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _orderService.DeleteOrderByProductIdAsync(productId);
             }
             catch (Exception ex)
@@ -99,6 +107,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _orderService.DeleteOrderByProductNameAndSizeAsync(productName, productSize);
             }
             catch (Exception ex)
@@ -115,6 +125,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return await _orderService.GetAllOrdersAsync();
             }
             catch (Exception ex)
@@ -133,6 +145,8 @@ namespace Market.BL
             try
             {
                 var orderObtained = await _orderService.GetOrderByIdAsync(id);
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return orderObtained;
             }
             catch (Exception ex)
@@ -152,6 +166,8 @@ namespace Market.BL
             try
             {
                 var orderObtained = await _orderService.GetOrderByProductNameAndSizeAsync(productName, productSize);
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 return orderObtained;
             }
             catch (Exception ex)
@@ -169,6 +185,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _orderService.UpdateOrderQuantityByIdAsync(id, newQuantity);
             }
             catch (Exception ex)
@@ -186,6 +204,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _orderService.UpdateOrderQuantityByProductIdAsync(productId, newQuantity);
             }
             catch (Exception ex)
@@ -204,6 +224,8 @@ namespace Market.BL
         {
             try
             {
+                #region Broker Message insertions by MQProducerMessageLogger
+                #endregion
                 await _orderService.UpdateOrderQuantityByProductNameAndSizeAsync(productName, productSize, newQuantity);
             }
             catch (Exception ex)

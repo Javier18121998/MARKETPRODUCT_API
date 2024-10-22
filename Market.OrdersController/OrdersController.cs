@@ -1,9 +1,11 @@
 ﻿using Market.BL.IBL;
 using Market.DataModels.DTos;
+using Market.DataValidation.DataValidation;
 using Market.Utilities.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace Market.OrdersController
@@ -32,8 +34,13 @@ namespace Market.OrdersController
             Description = "Crear una Orden por medio del Nombre del Producto y su Tamaño")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Producto No encontrado Falló el Nombre y/o el Tamaño.")]
-        public async Task<IActionResult> CreateOrderByProductNameAndSize([FromBody] CreateOrderByProductNameAndSizeDto request)
+        public async Task<IActionResult> CreateOrderByProductNameAndSize(
+            [FromBody]
+            [CreateOrderByProductNameAndSizeValidation]
+            CreateOrderByProductNameAndSizeDto request)
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 var order = await _orderServiceBL.CreateOrderByProductNameAndSizeAsync(request.ProductName, request.ProductSize, request.Quantity);
@@ -57,8 +64,14 @@ namespace Market.OrdersController
             Description = "Crear una Orden por medio del Id del Producto")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Producto No encontrado Falló el Id del Producto.")]
-        public async Task<IActionResult> CreateOrderByProductId([FromBody] CreateOrderByProductIdDto request)
+        public async Task<IActionResult> CreateOrderByProductId(
+                [FromBody]
+                [CreateOrderByProductIdValidation]
+                CreateOrderByProductIdDto request
+            )
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 var order = await _orderServiceBL.CreateOrderByProductIdAsync(request.ProductId, request.Quantity);
@@ -83,8 +96,17 @@ namespace Market.OrdersController
             Description = "Modificar una Orden por medio del Id de la Orden")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Id de la Orden.")]
-        public async Task<IActionResult> UpdateOrderQuantityById(int id, [FromBody] UpdateOrderQuantityDto request)
+        public async Task<IActionResult> UpdateOrderQuantityById(
+                [Required]
+                [IdValidation]
+                int id, 
+                [FromBody]
+                [UpdateOrderQuantityValidation]
+                DataModels.DTos.UpdateOrderQuantityDto request
+            )
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 await _orderServiceBL.UpdateOrderQuantityByIdAsync(id, request.NewQuantity);
@@ -109,8 +131,17 @@ namespace Market.OrdersController
             Description = "Modificar una Orden por medio del Id del producto")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Id del producto.")]
-        public async Task<IActionResult> UpdateOrderQuantityByProductId(int productId, [FromBody] UpdateOrderQuantityDto request)
+        public async Task<IActionResult> UpdateOrderQuantityByProductId(
+                [Required]
+                [IdValidation]
+                int productId, 
+                [FromBody]
+                [UpdateOrderQuantityValidation]
+                DataModels.DTos.UpdateOrderQuantityDto request
+            )
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 await _orderServiceBL.UpdateOrderQuantityByProductIdAsync(productId, request.NewQuantity);
@@ -134,8 +165,14 @@ namespace Market.OrdersController
             Description = "Modificar una Orden por medio del Nombre del Producto y El tamaño")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Nombre del Producto y/o el Tamaño.")]
-        public async Task<IActionResult> UpdateOrderQuantityByProductNameAndSize([FromBody] UpdateOrderQuantityByNameAndSizeDto request)
+        public async Task<IActionResult> UpdateOrderQuantityByProductNameAndSize(
+                [FromBody]
+                [UpdateOrderQuantityByNameAndSizeValidation]
+                UpdateOrderQuantityByNameAndSizeDto request
+            )
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 await _orderServiceBL.UpdateOrderQuantityByProductNameAndSizeAsync(request.ProductName, request.ProductSize, request.NewQuantity);
@@ -159,8 +196,14 @@ namespace Market.OrdersController
             Description = "Eliminar una Orden por su Id.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Id de la Orden.")]
-        public async Task<IActionResult> DeleteOrderById(int id)
+        public async Task<IActionResult> DeleteOrderById(
+                [Required]
+                [IdValidation]
+                int id
+            )
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 await _orderServiceBL.DeleteOrderByIdAsync(id);
@@ -186,6 +229,8 @@ namespace Market.OrdersController
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Id del Producto")]
         public async Task<IActionResult> DeleteOrderByProductId(int productId)
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 await _orderServiceBL.DeleteOrderByProductIdAsync(productId);
@@ -209,8 +254,14 @@ namespace Market.OrdersController
             Description = "Eliminar una Orden por medio del Nombre del Producto y su tamño.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Nombre del Producto y/o el Tamaño.")]
-        public async Task<IActionResult> DeleteOrderByProductNameAndSize([FromBody] DeleteOrderByNameAndSizeDto request)
+        public async Task<IActionResult> DeleteOrderByProductNameAndSize(
+                [FromBody]
+                [DeleteOrderByNameAndSizeValidation]
+                DeleteOrderByNameAndSizeDto request
+            )
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 await _orderServiceBL.DeleteOrderByProductNameAndSizeAsync(request.ProductName, request.ProductSize);
@@ -235,6 +286,8 @@ namespace Market.OrdersController
         [SwaggerResponse((int)HttpStatusCode.NotFound, "No hay Ordenes.")]
         public async Task<IActionResult> GetAllOrders()
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 var orders = await _orderServiceBL.GetAllOrdersAsync();
@@ -258,8 +311,14 @@ namespace Market.OrdersController
             Description = "Obtener una Orden por medio del Id de la Orden.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Id de la Orden.")]
-        public async Task<IActionResult> GetOrderById(int id)
+        public async Task<IActionResult> GetOrderById(
+                [Required]
+                [IdValidation]
+                int id
+            )
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 var order = await _orderServiceBL.GetOrderByIdAsync(id);
@@ -288,8 +347,18 @@ namespace Market.OrdersController
             Description = "Obtener una Orden por medio del Nombre del Producto y El tamaño")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, "Orden no encontrada Falló el Nombre del Producto y/o el Tamaño.")]
-        public async Task<IActionResult> GetOrderByProductNameAndSize([FromQuery] string productName, [FromQuery] string productSize)
+        public async Task<IActionResult> GetOrderByProductNameAndSize(
+                [FromQuery]
+                [Required]
+                [NameValidation]
+                string productName, 
+                [FromQuery]
+                [Required]
+                [SizeValidation]
+                string productSize)
         {
+            var objRequest = $"{HttpContext.Request.Method}/{HttpContext.Request.Host}/{HttpContext.Request.Path}/{HttpContext.Request.QueryString}";
+            _logger.LogDebug(objRequest.ToString());
             try
             {
                 var order = await _orderServiceBL.GetOrderByProductNameAndSizeAsync(productName, productSize);

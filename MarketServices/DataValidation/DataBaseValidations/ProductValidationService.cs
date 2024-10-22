@@ -23,7 +23,7 @@ namespace Market.DataValidation.DataBaseValidations
         }
         public async Task<bool> ProductExistsByNameAndSizeAsync(string name, string size)
         {
-            return await _context.Products.AnyAsync(p => p.Name == name && p.Size == size);
+            return await _context.Products.AnyAsync(p => p.ProductName == name && p.ProductSize == size);
         }
     }
 }
