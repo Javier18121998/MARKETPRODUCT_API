@@ -3,6 +3,7 @@ using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
 using Market.DataValidation.DataValidation;
 using Market.Utilities.BaseControllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -58,6 +59,7 @@ namespace Market.ProductsController
         /// </summary>
         /// <param name="id">Product ID.</param>
         /// <returns>Product details.</returns>
+        [Authorize]
         [HttpGet("{id}")]
         [SwaggerOperation(
             Summary = "Obtener un producto por ID",
@@ -100,6 +102,7 @@ namespace Market.ProductsController
         /// <param name="name">Product name.</param>
         /// <param name="size">Product size.</param>
         /// <returns>Product details.</returns>
+        [Authorize]
         [HttpGet("name/{name}/size/{size}")]
         [SwaggerOperation(
             Summary = "Obtener un producto por nombre y tamaño",
@@ -144,6 +147,7 @@ namespace Market.ProductsController
         /// </summary>
         /// <param name="product">Product details.</param>
         /// <returns>The created product.</returns>
+        [Authorize]
         [HttpPost]
         [SwaggerOperation(
             Summary = "Crear un nuevo producto",
@@ -166,7 +170,7 @@ namespace Market.ProductsController
             {
                 var createdProduct = await _productServiceBL.CreateProductAsync(product);
                 _logger.LogInformation($"The product: {createdProduct.ToString()} was created succesfully");
-                return CreatedAtAction(nameof(GetProductByIdAsync), new { id = createdProduct.Id }, createdProduct);
+                return Created(string.Empty, createdProduct);
             }
             catch (Exception ex)
             {
@@ -181,6 +185,7 @@ namespace Market.ProductsController
         /// <param name="id">Product ID.</param>
         /// <param name="newDescription">New description to set.</param>
         /// <returns>No content if successful.</returns>
+        [Authorize]
         [HttpPut("{id}/description")]
         [SwaggerOperation(
             Summary = "Actualizar un producto existente",
@@ -223,6 +228,7 @@ namespace Market.ProductsController
         /// <param name="size">Product size.</param>
         /// <param name="newDescription">New description to set.</param>
         /// <returns>No content if successful.</returns>
+        [Authorize]
         [HttpPut("name/{name}/size/{size}/description")]
         [SwaggerOperation(
             Summary = "Actualizar un producto existente",
@@ -266,6 +272,7 @@ namespace Market.ProductsController
         /// </summary>
         /// <param name="id">Product ID.</param>
         /// <returns>No content if successful.</returns>
+        [Authorize]
         [HttpDelete("{id}")]
         [SwaggerOperation(
             Summary = "Eliminar un producto",
@@ -301,6 +308,7 @@ namespace Market.ProductsController
         /// <param name="name">Product name.</param>
         /// <param name="size">Product size.</param>
         /// <returns>No content if successful.</returns>
+        [Authorize]
         [HttpDelete("name/{name}/size/{size}")]
         [SwaggerOperation(
             Summary = "Eliminar un producto",

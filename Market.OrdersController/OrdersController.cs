@@ -2,6 +2,7 @@
 using Market.DataModels.DTos;
 using Market.DataValidation.DataValidation;
 using Market.Utilities.BaseControllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -28,6 +29,7 @@ namespace Market.OrdersController
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost("CreateByNameAndSize")]
         [SwaggerOperation(
             Summary = "Crear una Orden",
@@ -58,6 +60,7 @@ namespace Market.OrdersController
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost("CreateById")]
         [SwaggerOperation(
             Summary = "Crear una Orden",
@@ -90,6 +93,7 @@ namespace Market.OrdersController
         /// <param name="id"></param>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("UpdateQuantityById/{id}")]
         [SwaggerOperation(
             Summary = "Modificar una Orden",
@@ -125,6 +129,7 @@ namespace Market.OrdersController
         /// <param name="productId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("UpdateQuantityByProductId/{productId}")]
         [SwaggerOperation(
             Summary = "Modificar una Orden",
@@ -159,6 +164,7 @@ namespace Market.OrdersController
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("UpdateQuantityByNameAndSize")]
         [SwaggerOperation(
             Summary = "Modificar una Orden",
@@ -190,6 +196,7 @@ namespace Market.OrdersController
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete("DeleteById/{id}")]
         [SwaggerOperation(
             Summary = "Eliminar una Orden.",
@@ -221,6 +228,7 @@ namespace Market.OrdersController
         /// </summary>
         /// <param name="productId"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete("DeleteByProductId/{productId}")]
         [SwaggerOperation(
             Summary = "Eliminar una Orden.",
@@ -248,6 +256,7 @@ namespace Market.OrdersController
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete("DeleteByNameAndSize")]
         [SwaggerOperation(
             Summary = "Eliminar una Orden.",
@@ -278,6 +287,7 @@ namespace Market.OrdersController
         /// 9. Get all the Orders.
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("GetAll")]
         [SwaggerOperation(
             Summary = "Obtener todas las Ordenes.",
@@ -305,6 +315,7 @@ namespace Market.OrdersController
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("GetById/{id}")]
         [SwaggerOperation(
             Summary = "Obtener una Orden",
@@ -341,6 +352,7 @@ namespace Market.OrdersController
         /// <param name="productName"></param>
         /// <param name="productSize"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("GetByNameAndSize")]
         [SwaggerOperation(
             Summary = "Obtener una Orden",

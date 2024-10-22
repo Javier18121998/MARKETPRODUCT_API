@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\MARKETPRODUCT_API.props" />
-</Project>
