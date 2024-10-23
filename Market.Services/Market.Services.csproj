@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Market.AuthorizationController\Market.AuthorizationController.csproj" />
+    <ProjectReference Include="..\Market.CartsController\Market.CartsController.csproj" />
     <ProjectReference Include="..\Market.OrdersController\Market.OrdersController.csproj" />
     <ProjectReference Include="..\Market.ProductsController\Market.ProductsController.csproj" />
     <ProjectReference Include="..\Market\Market.csproj" />

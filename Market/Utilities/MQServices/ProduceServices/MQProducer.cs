@@ -5,6 +5,7 @@ using RabbitMQ.Client;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Market.Utilities.MQServices.ProduceServices
 {
@@ -93,26 +94,33 @@ namespace Market.Utilities.MQServices.ProduceServices
 
         /// <summary>
         /// Creates a secure and randomly manipulated transaction name based on a hash value.
-        /// Uses SHA3-256 to create a unique value and add complexity to the transaction name.
+        /// Uses SHA-256 to create a unique value and add complexity to the transaction name.
         /// </summary>
         /// <param name="length">Length of the hash value generated that will be appended to the transaction name.</param>
         /// <param name="nameTransaction">The original transaction name.</param>
         /// <returns>A manipulated and secure transaction name.</returns>
-        private static string TransactionNameCraper(int length, string nameTransaction)
+        private string TransactionNameCraper(int length, string nameTransaction)
         {
-            using (SHA3_256 sha256 = SHA3_256.Create())
+            try
             {
-                string randomValue = Guid.NewGuid().ToString();
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(randomValue));
-
-                StringBuilder sb = new StringBuilder();
-                foreach (byte b in hashBytes)
+                using (SHA256 sha256 = SHA256.Create()) // Reemplazamos SHA3-256 por SHA-256 nativo
                 {
-                    sb.Append(b.ToString("X2"));
+                    string randomValue = Guid.NewGuid().ToString();
+                    byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(randomValue));
+
+                    StringBuilder sb = new StringBuilder();
+                    foreach (byte b in hashBytes)
+                    {
+                        sb.Append(b.ToString("X2"));
+                    }
+                    var crapetValue = sb.ToString().Substring(0, length);
+                    var shuffleStatement = ComplexShuffle(nameTransaction, crapetValue);
+                    return shuffleStatement;
                 }
-                var crapetValue = sb.ToString().Substring(0, length);
-                var shuffleStatement = ComplexShuffle(nameTransaction, crapetValue);
-                return shuffleStatement;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -123,35 +131,42 @@ namespace Market.Utilities.MQServices.ProduceServices
         /// <param name="nameTransaction">The original transaction name.</param>
         /// <param name="crapetValue">The hash value generated to mix with the transaction name.</param>
         /// <returns>The shuffled and encrypted transaction name.</returns>
-        private static string ComplexShuffle(string nameTransaction, string crapetValue)
+        private string ComplexShuffle(string nameTransaction, string crapetValue)
         {
-            string combined = nameTransaction + crapetValue;
-            char[] array = combined.ToCharArray();
-
-            for (int i = 0; i < array.Length - 1; i += 2)
+            try
             {
-                array[i] = (char)(array[i] ^ array[i + 1]);
+                string combined = nameTransaction + crapetValue;
+                char[] array = combined.ToCharArray();
+
+                for (int i = 0; i < array.Length - 1; i += 2)
+                {
+                    array[i] = (char)(array[i] ^ array[i + 1]);
+                }
+
+                int hashSeed = GetHashSeed(combined);
+                Random rng = new Random(hashSeed);
+
+                int n = array.Length;
+                while (n > 1)
+                {
+                    n--;
+                    int k = (rng.Next(n + 1) * 31) % array.Length;
+                    var temp = array[k];
+                    array[k] = array[n];
+                    array[n] = temp;
+                }
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    array[i] = ShiftBitsCircular(array[i], 3);
+                }
+
+                return new string(array);
             }
-
-            int hashSeed = GetHashSeed(combined);
-            Random rng = new Random(hashSeed);
-
-            int n = array.Length;
-            while (n > 1)
+            catch (Exception ex)
             {
-                n--;
-                int k = (rng.Next(n + 1) * 31) % array.Length;
-                var temp = array[k];
-                array[k] = array[n];
-                array[n] = temp;
+                throw new Exception(ex.Message);
             }
-
-            for (int i = 0; i < array.Length; i++)
-            {
-                array[i] = ShiftBitsCircular(array[i], 3);
-            }
-
-            return new string(array);
         }
 
         /// <summary>
@@ -159,13 +174,20 @@ namespace Market.Utilities.MQServices.ProduceServices
         /// </summary>
         /// <param name="input">The input string to hash.</param>
         /// <returns>An integer seed derived from the hash of the input string.</returns>
-        private static int GetHashSeed(string input)
+        private int GetHashSeed(string input)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            try
             {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-                int seed = BitConverter.ToInt32(hashBytes, 0);
-                return Math.Abs(seed);
+                using (SHA256 sha256 = SHA256.Create())
+                {
+                    byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+                    int seed = BitConverter.ToInt32(hashBytes, 0);
+                    return Math.Abs(seed);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
             }
         }
 
@@ -175,7 +197,7 @@ namespace Market.Utilities.MQServices.ProduceServices
         /// <param name="c">The character to shift.</param>
         /// <param name="positions">The number of positions to shift.</param>
         /// <returns>The character after shifting its bits circularly.</returns>
-        private static char ShiftBitsCircular(char c, int positions)
+        private char ShiftBitsCircular(char c, int positions)
         {
             return (char)(((c >> positions) | (c << (8 - positions))) & 0xFF);
         }

@@ -123,6 +123,8 @@ namespace MARKETPRODUCT_API
             services.AddScoped<Market.DAL.IDAL.IOrderService, Market.DAL.OrderService>();
             services.AddScoped<Market.DataValidation.IDataBaseValidations.IProductValidationService, Market.DataValidation.DataBaseValidations.ProductValidationService>();
             services.AddScoped<Market.DataValidation.IDataBaseValidations.IOrderValidationService, Market.DataValidation.DataBaseValidations.OrderValidationService>();
+            services.AddScoped<Market.Utilities.MQServices.IManageServices.IMQManagerService, Market.Utilities.MQServices.ManageServices.MQManagerService>();
+            services.AddScoped<Market.Utilities.MQServices.IProduceServices.IMQProducer, Market.Utilities.MQServices.ProduceServices.MQProducer>();
             services.AddSingleton<MQProducer>(); // Registers the message queue producer as a singleton.
         }
 

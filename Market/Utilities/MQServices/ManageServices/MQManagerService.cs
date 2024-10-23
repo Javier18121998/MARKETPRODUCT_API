@@ -27,9 +27,38 @@ namespace Market.Utilities.MQServices.ManageServices
         /// </summary>
         /// <param name="logMessage">The log message containing transaction details.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task ConfigureMessageSendingAsync(LogMessage logMessage)
+        public async Task ConfigureMessageSendingAsync(LogMessage logMessage, bool isTransactionSuccess = true)
         {
-            string typeElement = ConfigureTypeElementInTransaction(logMessage.TransactionPathEndpoint);
+            // Validación de parámetros
+            if (string.IsNullOrEmpty(logMessage.TransactionName))
+                throw new ArgumentException("El nombre de la transacción no puede estar vacío.", nameof(logMessage.TransactionName));
+
+            if (string.IsNullOrEmpty(logMessage.TransactionPathEndpoint))
+                throw new ArgumentException("El endpoint de la transacción no puede estar vacío.", nameof(logMessage.TransactionPathEndpoint));
+
+            if (string.IsNullOrEmpty(logMessage.TransactionDescription))
+                throw new ArgumentException("La descripción de la transacción no puede estar vacía.", nameof(logMessage.TransactionDescription));
+
+            string typeElement;
+            if (isTransactionSuccess)
+            {
+                // Configuración del elemento tipo si es success
+                 typeElement = ConfigureTypeElementInTransaction(logMessage.TransactionPathEndpoint);
+            }
+            else
+            {
+                // Configuración del elemento tipo si no es success
+                typeElement = "ZMPT0000000";
+            }
+
+            // Crear el objeto MQBodyTransaction
+            var mqBodyTransaction = new MQBodyTransaction
+            {
+                Message = logMessage,
+                TypeElement = typeElement
+            };
+
+            // Enviar el mensaje
             await _mQProducer.SendMessageAsync<MQBodyTransaction>(
                 logMessage.TransactionId,
                 logMessage.TransactionName,
@@ -38,32 +67,6 @@ namespace Market.Utilities.MQServices.ManageServices
                 logMessage.TransactionPathEndpoint,
                 typeElement
             );
-        }
-
-        /// <summary>
-        /// Configures the MQ transaction based on the provided log message and type element.
-        /// </summary>
-        /// <param name="logMessage">The log message to configure.</param>
-        /// <param name="typeElement">The type element associated with the transaction.</param>
-        /// <returns>An instance of <see cref="MQBodyTransaction"/> containing the configured message.</returns>
-        /// <exception cref="ArgumentException">Thrown when any of the required properties of logMessage are null or empty.</exception>
-        private MQBodyTransaction ConfigureMQTransactions(LogMessage logMessage, string typeElement)
-        {
-            if (string.IsNullOrEmpty(logMessage.TransactionName))
-                throw new ArgumentException("The transaction name cannot be empty.", nameof(logMessage.TransactionName));
-
-            if (string.IsNullOrEmpty(logMessage.TransactionPathEndpoint))
-                throw new ArgumentException("The transaction endpoint cannot be empty.", nameof(logMessage.TransactionPathEndpoint));
-
-            if (string.IsNullOrEmpty(logMessage.TransactionDescription))
-                throw new ArgumentException("The transaction description cannot be empty.", nameof(logMessage.TransactionDescription));
-
-            typeElement = ConfigureTypeElementInTransaction(logMessage.TransactionPathEndpoint);
-            return new MQBodyTransaction
-            {
-                Message = logMessage,
-                TypeElement = typeElement
-            };
         }
 
         /// <summary>
