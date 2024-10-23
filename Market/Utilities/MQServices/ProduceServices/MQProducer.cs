@@ -1,19 +1,27 @@
-﻿using Market.Utilities.MQServices.MQModels;
+﻿using Market.Utilities.MQServices.IProduceServices;
+using Market.Utilities.MQServices.MQModels;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Market.Utilities.MQServices.ProduceServices
 {
-    public class MQProducer
+    /// <summary>
+    /// The MQProducer class provides functionality to send messages to a RabbitMQ queue.
+    /// It handles connection initialization, queue declaration, and sending messages serialized in JSON format.
+    /// It also includes methods for securely and randomly manipulating transaction names.
+    /// </summary>
+    public class MQProducer : IMQProducer
     {
         private readonly IConnection _connection;
         private readonly IModel _channel;
+
+        /// <summary>
+        /// Constructor for the MQProducer class.
+        /// Initializes the connection to RabbitMQ and declares the queue where messages will be sent.
+        /// </summary>
         public MQProducer()
         {
             var factory = new ConnectionFactory()
@@ -28,29 +36,35 @@ namespace Market.Utilities.MQServices.ProduceServices
                       durable: true,
                       exclusive: false,
                       autoDelete: false,
-                      arguments: null);
+                      arguments: null
+            );
         }
 
         /// <summary>
-        /// Envía un mensaje a la cola especificada.
-        /// El mensaje se serializa a formato JSON antes de ser enviado.
+        /// Sends a message to the RabbitMQ queue.
+        /// The message is serialized into JSON format and sent to the specified queue.
         /// </summary>
-        /// <typeparam name="T">El tipo del mensaje que se va a enviar.</typeparam>
-        /// <param name="message">El mensaje que se va a enviar.</param>
-        public void SendMessage<T>(
-            short idTransaction,
-            string nameTransaction,
-            string descriptionTransaction,
-            DateTime dateTimeTransaction,
-            string inPathEndpoint,
-            string typeElement
+        /// <typeparam name="T">The generic type of the message to be sent.</typeparam>
+        /// <param name="idTransaction">The transaction ID.</param>
+        /// <param name="nameTransaction">The name of the transaction, which will be processed before sending.</param>
+        /// <param name="descriptionTransaction">The description of the transaction.</param>
+        /// <param name="dateTimeTransaction">The date and time of the transaction.</param>
+        /// <param name="inPathEndpoint">The incoming endpoint related to the transaction.</param>
+        /// <param name="typeElement">The type of element associated with the transaction.</param>
+        public async Task SendMessageAsync<T>(
+                short idTransaction,
+                string nameTransaction,
+                string descriptionTransaction,
+                DateTime dateTimeTransaction,
+                string inPathEndpoint,
+                string typeElement
             )
         {
             nameTransaction = TransactionNameCraper(8, nameTransaction);
             var bodyMQService = new MQBodyTransaction
             {
                 Message = new LogMessage
-                { 
+                {
                     TransactionId = idTransaction,
                     TransactionName = nameTransaction,
                     TransactionDescription = descriptionTransaction,
@@ -63,16 +77,28 @@ namespace Market.Utilities.MQServices.ProduceServices
             var jsonMessage = JsonConvert.SerializeObject(bodyMQService);
             var body = Encoding.UTF8.GetBytes(jsonMessage);
 
-            _channel.BasicPublish(
-                exchange: "",
-                routingKey: "logs_queue",
-                basicProperties: null,
-                body: body
-            );
-            Console.WriteLine($"[x] Mensaje enviado: {jsonMessage}");
+            // Publicar el mensaje de manera asincrónica
+            await Task.Run(() =>
+            {
+                _channel.BasicPublish(
+                    exchange: "",
+                    routingKey: "logs_queue",
+                    basicProperties: null,
+                    body: body
+                );
+                Console.WriteLine($"[x] Message sent: {jsonMessage}");
+            });
         }
 
-        private static string TransactionNameCraper(int length, string nameTransacction)
+
+        /// <summary>
+        /// Creates a secure and randomly manipulated transaction name based on a hash value.
+        /// Uses SHA3-256 to create a unique value and add complexity to the transaction name.
+        /// </summary>
+        /// <param name="length">Length of the hash value generated that will be appended to the transaction name.</param>
+        /// <param name="nameTransaction">The original transaction name.</param>
+        /// <returns>A manipulated and secure transaction name.</returns>
+        private static string TransactionNameCraper(int length, string nameTransaction)
         {
             using (SHA3_256 sha256 = SHA3_256.Create())
             {
@@ -82,14 +108,21 @@ namespace Market.Utilities.MQServices.ProduceServices
                 StringBuilder sb = new StringBuilder();
                 foreach (byte b in hashBytes)
                 {
-                    sb.Append(b.ToString("X2")); 
+                    sb.Append(b.ToString("X2"));
                 }
                 var crapetValue = sb.ToString().Substring(0, length);
-                var shuffleStatement = ComplexShuffle(nameTransacction, crapetValue);
+                var shuffleStatement = ComplexShuffle(nameTransaction, crapetValue);
                 return shuffleStatement;
             }
         }
 
+        /// <summary>
+        /// Applies a complex shuffling algorithm to a transaction name and a hash value.
+        /// Utilizes XOR and circular bit shifts to transform the name.
+        /// </summary>
+        /// <param name="nameTransaction">The original transaction name.</param>
+        /// <param name="crapetValue">The hash value generated to mix with the transaction name.</param>
+        /// <returns>The shuffled and encrypted transaction name.</returns>
         private static string ComplexShuffle(string nameTransaction, string crapetValue)
         {
             string combined = nameTransaction + crapetValue;
@@ -97,7 +130,7 @@ namespace Market.Utilities.MQServices.ProduceServices
 
             for (int i = 0; i < array.Length - 1; i += 2)
             {
-                array[i] = (char)(array[i] ^ array[i + 1]); 
+                array[i] = (char)(array[i] ^ array[i + 1]);
             }
 
             int hashSeed = GetHashSeed(combined);
@@ -107,7 +140,7 @@ namespace Market.Utilities.MQServices.ProduceServices
             while (n > 1)
             {
                 n--;
-                int k = (rng.Next(n + 1) * 31) % array.Length; 
+                int k = (rng.Next(n + 1) * 31) % array.Length;
                 var temp = array[k];
                 array[k] = array[n];
                 array[n] = temp;
@@ -115,12 +148,17 @@ namespace Market.Utilities.MQServices.ProduceServices
 
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = ShiftBitsCircular(array[i], 3); 
+                array[i] = ShiftBitsCircular(array[i], 3);
             }
 
             return new string(array);
         }
 
+        /// <summary>
+        /// Generates a hash seed based on the input string using SHA256.
+        /// </summary>
+        /// <param name="input">The input string to hash.</param>
+        /// <returns>An integer seed derived from the hash of the input string.</returns>
         private static int GetHashSeed(string input)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -131,6 +169,12 @@ namespace Market.Utilities.MQServices.ProduceServices
             }
         }
 
+        /// <summary>
+        /// Performs a circular bit shift on a character by a specified number of positions.
+        /// </summary>
+        /// <param name="c">The character to shift.</param>
+        /// <param name="positions">The number of positions to shift.</param>
+        /// <returns>The character after shifting its bits circularly.</returns>
         private static char ShiftBitsCircular(char c, int positions)
         {
             return (char)(((c >> positions) | (c << (8 - positions))) & 0xFF);
