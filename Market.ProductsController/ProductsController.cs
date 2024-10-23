@@ -3,6 +3,7 @@ using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
 using Market.DataValidation.DataValidation;
 using Market.Utilities.BaseControllers;
+using Market.Utilities.MQServices.MQModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -43,7 +44,19 @@ namespace Market.ProductsController
             _logger.LogInformation("Requesting all the products");
             try
             {
-                var products = await _productServiceBL.GetAllProductsAsync();
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "GetAllProductsAsync",
+                    TransactionDescription = "Fetching all available products.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                var products = await _productServiceBL.GetAllProductsAsync(logMessage);
                 _logger.LogInformation($"The products List: {products} were request succesfully.");
                 return Ok(products);
             }
@@ -80,7 +93,19 @@ namespace Market.ProductsController
             _logger.LogInformation("Requesting the product by their Id");
             try
             {
-                var product = await _productServiceBL.GetProductByIdAsync(id);
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "GetProductByIdAsync",
+                    TransactionDescription = "Fetching product by their Id.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                var product = await _productServiceBL.GetProductByIdAsync(id, logMessage);
                 if (product == null)
                 {
                     _logger.LogDebug($"The product not exist");
@@ -126,7 +151,19 @@ namespace Market.ProductsController
             _logger.LogInformation("Requesting am product by their Name and Size");
             try
             {
-                var product = await _productServiceBL.GetProductByNameAndSizeAsync(name, size);
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "GetProductByNameAndSizeAsync",
+                    TransactionDescription = "Fetching a product by their Name and Size.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                var product = await _productServiceBL.GetProductByNameAndSizeAsync(name, size, logMessage);
                 if (product == null)
                 {
                     _logger.LogDebug($"The product not exist");
@@ -168,13 +205,29 @@ namespace Market.ProductsController
             _logger.LogInformation("Creating a new product");
             try
             {
-                var createdProduct = await _productServiceBL.CreateProductAsync(product);
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "CreateProductAsync",
+                    TransactionDescription = "Creating a product.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                var createdProduct = await _productServiceBL.CreateProductAsync(product, logMessage);
                 _logger.LogInformation($"The product: {createdProduct.ToString()} was created succesfully");
                 return Created(string.Empty, createdProduct);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating a new product.");
+                if (ex.Message.Equals("This product is already exists in the system."))
+                {
+                    return BadRequest(ex.Message);
+                }
                 return StatusCode(500, "An error occurred while creating the product.");
             }
         }
@@ -210,7 +263,19 @@ namespace Market.ProductsController
             _logger.LogInformation("Updating the description into a product by their Id");
             try
             {
-                await _productServiceBL.UpdateDescriptionByIdAsync(id, newDescription);
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "UpdateDescriptionByIdAsync",
+                    TransactionDescription = "Updating a description by their Id product.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                await _productServiceBL.UpdateDescriptionByIdAsync(id, newDescription, logMessage);
                 _logger.LogInformation("Description into a Product successfully.");
                 return NoContent();
             }
@@ -256,7 +321,19 @@ namespace Market.ProductsController
             _logger.LogInformation("Updating the description into a product by their Name and Size");
             try
             {
-                await _productServiceBL.UpdateDescriptionByNameAndSizeAsync(name, size, newDescription);
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "UpdateDescriptionByNameAndSizeAsync",
+                    TransactionDescription = "Updating description by their product name and Size.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                await _productServiceBL.UpdateDescriptionByNameAndSizeAsync(name, size, newDescription, logMessage);
                 _logger.LogInformation("Description into a Product successfully.");
                 return NoContent();
             }
@@ -291,7 +368,19 @@ namespace Market.ProductsController
             _logger.LogInformation("Deleting a Product by their Id.");
             try
             {
-                await _productServiceBL.DeleteProductByIdAsync(id);
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "DeleteProductByIdAsync",
+                    TransactionDescription = "Deleting a product by their Id.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                await _productServiceBL.DeleteProductByIdAsync(id, logMessage);
                 _logger.LogInformation("Product was deleted successfully.");
                 return NoContent();
             }
@@ -331,7 +420,19 @@ namespace Market.ProductsController
             _logger.LogInformation("Deleting a Product by their Name and Size.");
             try
             {
-                await _productServiceBL.DeleteProductByNameAndSizeAsync(name, size);
+                #region MQTRansactions Services
+                ITransactionIdGenerator transactionIdGenerator = new TransactionIdGenerator();
+                var transactionId = transactionIdGenerator.GenerateTransactionId();
+                LogMessage logMessage = new LogMessage
+                {
+                    TransactionId = transactionId,
+                    TransactionName = "DeleteProductByNameAndSizeAsync",
+                    TransactionDescription = "Deleting a product by their Name and Size.",
+                    TransactionTime = DateTime.UtcNow,
+                    TransactionPathEndpoint = objRequest.ToString()
+                };
+                #endregion
+                await _productServiceBL.DeleteProductByNameAndSizeAsync(name, size, logMessage);
                 _logger.LogInformation("Product was deleted successfully.");
                 return NoContent();
             }
@@ -341,5 +442,15 @@ namespace Market.ProductsController
                 return StatusCode(500, "An error occurred while deleting the product.");
             }
         }
+    }
+
+    public interface ITransactionIdGenerator
+    {
+        short GenerateTransactionId();
+    }
+    public class TransactionIdGenerator : ITransactionIdGenerator
+    {
+        private static short _currentId;
+        public short GenerateTransactionId() => ++_currentId;
     }
 }

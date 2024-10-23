@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Market.DAL
@@ -29,17 +30,25 @@ namespace Market.DAL
         /// <returns>The created product.</returns>
         public async Task<ProductDto> CreateProductAsync(Product product)
         {
-            var productCreated = new ProductDto
+            try
             {
-                Id = product.Id,
-                ProductName = product.Name,
-                ProductDescription = product.Description,
-                ProductPrice = product.Price,
-                ProductSize = product.Size,
-            };
-            _context.Products.Add(productCreated);
-            await _context.SaveChangesAsync();
-            return productCreated;
+                await IsProductDuplicateAsync(product);
+                var productCreated = new ProductDto
+                {
+                    Id = product.Id,
+                    ProductName = product.Name,
+                    ProductDescription = product.Description,
+                    ProductPrice = product.Price,
+                    ProductSize = product.Size,
+                };
+                _context.Products.Add(productCreated);
+                await _context.SaveChangesAsync();
+                return productCreated;
+            }
+            catch (Exception) 
+            {
+                throw new Exception("This product is already exists in the system.");
+            }
         }
 
         /// <summary>
@@ -163,5 +172,54 @@ namespace Market.DAL
                 throw new Exception("The product with the specified name and size does not exist.");
             }
         }
+
+        /// <summary>
+        /// Contains methods to validate if a product is a duplicate based on its name and size.
+        /// The logic involves normalizing both the product name and size to ensure consistent comparisons.
+        /// If a duplicate product is found, an exception is thrown to indicate the conflict.
+        /// </summary>
+        #region DuplicateProducts Logic
+        private async Task IsProductDuplicateAsync(Product product)
+        {
+            string normalizedName = NormalizeProductName(product.Name);
+            var existingProducts = await _context.Products.ToListAsync();
+            var matchingProducts = existingProducts
+                .Where(p => NormalizeProductName(p.ProductName) == normalizedName)
+                .ToList();
+            string normalizedSize = NormalizeProductSize(product.Size);
+            if (matchingProducts.Any(existingProduct => NormalizeProductSize(existingProduct.ProductSize) == normalizedSize))
+            {
+                throw new Exception();
+            }
+        }
+
+        private string NormalizeProductName(string name)
+        {
+            return Regex.Replace(name.Trim().ToLowerInvariant(), @"\s+", " ");
+        }
+
+        private string NormalizeProductSize(string size)
+        {
+            var normalizedSize = size.ToLowerInvariant().Trim();
+            normalizedSize = normalizedSize
+                .Replace("1/2", "500") 
+                .Replace("ml", "")   
+                .Replace("lt", "1000") 
+                .Replace(" ", "");     
+            if (normalizedSize == "1lt" || normalizedSize == "1.0")
+            {
+                return "1000"; 
+            }
+            if (normalizedSize == "500")
+            {
+                return "500"; 
+            }
+            if (decimal.TryParse(normalizedSize, out decimal sizeInMl))
+            {
+                return sizeInMl.ToString(); 
+            }
+            return normalizedSize;
+        }
+        #endregion
     }
 }
