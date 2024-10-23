@@ -47,10 +47,7 @@ namespace MARKETPRODUCT_API
         /// <param name="services">The service collection to register services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddApplicationPart(typeof(OrdersController).Assembly) // Si está en otro proyecto
-                .AddApplicationPart(typeof(ProductsController).Assembly) // Si está en otro proyecto
-                .AddApplicationPart(typeof(AuthController).Assembly);
+            services.AddControllers();
 
             services.AddAuthentication(options =>
             {
