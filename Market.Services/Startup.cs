@@ -1,12 +1,5 @@
-﻿using MARKETPRODUCT_API.Data;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-using MARKETPRODUCT_API.Services.IServices;
-using MARKETPRODUCT_API.Services;
-using MARKETPRODUCT_API.Messaging.MessageProducer;
-using MARKETPRODUCT_API.MARKETUtilities;
-using MARKETPRODUCT_API.Data.ModelValidations.IDataModelValidations;
-using MARKETPRODUCT_API.Data.ModelValidations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -14,7 +7,13 @@ using Market.Market.Models;
 using Market.OrdersController;
 using Market.ProductsController;
 using MARKETPRODUCT_API.Controllers;
+using Market.Exceptions.Middlewares;
+using MARKETPRODUCT_API.MARKETUtilities;
+using Microsoft.AspNetCore.Mvc;
 //using Market.Market.Models;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace MARKETPRODUCT_API
 {
@@ -49,6 +48,7 @@ namespace MARKETPRODUCT_API
         {
             services.AddControllers();
 
+            // Configura autenticación con JWT
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,30 +62,54 @@ namespace MARKETPRODUCT_API
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"], // El emisor del token (Issuer)
-                    ValidAudience = Configuration["Jwt:Audience"], // El público objetivo (Audience)
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) // Llave secreta para validar el token
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                 };
             });
 
-            // Agrega autorización
-            services.AddAuthorization(options =>
+            services.AddAuthorization();
+
+            // Configuración de versionamiento de API
+            services.AddApiVersioning(options =>
             {
-                // Puedes configurar políticas de autorización personalizadas si lo necesitas
+                options.DefaultApiVersion = new ApiVersion(1, 0); // v1.0 como versión predeterminada
+                options.AssumeDefaultVersionWhenUnspecified = true; // Usa la versión predeterminada si no se especifica
+                options.ReportApiVersions = true; // Devuelve las versiones soportadas en la respuesta
             });
 
-            // Configura Swagger para que soporte autenticación JWT
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV"; // Formato de la versión
+                options.SubstituteApiVersionInUrl = true; // Habilita la versión en la URL
+            });
+
+            // Configuración de Swagger para varias versiones
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(MarketUtilities.CurrentVersion, new OpenApiInfo
+                // Define la documentación para v1
+                c.SwaggerDoc(MarketUtilities.CurrentVersionV1, new OpenApiInfo
                 {
                     Title = MarketUtilities.PedidoAPI,
-                    Version = MarketUtilities.CurrentVersion,
+                    Version = MarketUtilities.CurrentVersionV1,
                     Description = MarketUtilities.SwaggerDocDescription
                 });
-                c.EnableAnnotations(); // Enables annotations for better Swagger UI customization.
 
-                // Definición del esquema de seguridad para JWT (Bearer Token)
+                // Define la documentación para v2
+                c.SwaggerDoc(MarketUtilities.CurrentVersionV2, new OpenApiInfo
+                {
+                    Title = MarketUtilities.PedidoAPI,
+                    Version = MarketUtilities.CurrentVersionV2,
+                    Description = MarketUtilities.SwaggerDocDescriptionV2
+                });
+
+                c.DocInclusionPredicate((version, apiDesc) =>
+                {
+                    if (!apiDesc.GroupName.Equals(version, StringComparison.OrdinalIgnoreCase)) return false;
+                    return true;
+                });
+
+                // Configuración de seguridad para JWT en Swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -93,10 +117,9 @@ namespace MARKETPRODUCT_API
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Ingrese 'Bearer' seguido de su token JWT en el campo de texto. Ejemplo: 'Bearer abc123def456'"
+                    Description = "Ingrese 'Bearer' seguido de su token JWT. Ejemplo: 'Bearer abc123def456'"
                 });
 
-                // Requerimiento de seguridad para aplicar Bearer Token en los endpoints protegidos
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
@@ -117,6 +140,7 @@ namespace MARKETPRODUCT_API
                 options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
             );
 
+            // Registro de servicios de aplicación
             services.AddScoped<Market.BL.IBL.IOrderServiceBL, Market.BL.OrderServiceBL>();
             services.AddScoped<Market.BL.IBL.IProductServiceBL, Market.BL.ProductServiceBL>();
             services.AddScoped<Market.DAL.IDAL.IProductService, Market.DAL.ProductService>();
@@ -125,8 +149,8 @@ namespace MARKETPRODUCT_API
             services.AddScoped<Market.DataValidation.IDataBaseValidations.IOrderValidationService, Market.DataValidation.DataBaseValidations.OrderValidationService>();
             services.AddScoped<Market.Utilities.MQServices.IManageServices.IMQManagerService, Market.Utilities.MQServices.ManageServices.MQManagerService>();
             services.AddScoped<Market.Utilities.MQServices.IProduceServices.IMQProducer, Market.Utilities.MQServices.ProduceServices.MQProducer>();
-            services.AddSingleton<MQProducer>(); // Registers the message queue producer as a singleton.
         }
+
 
         /// <summary>
         /// Configures middleware components for the application pipeline.
@@ -139,20 +163,23 @@ namespace MARKETPRODUCT_API
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage(); // Provides detailed error pages in development.
-                app.UseSwagger(); // Enables the Swagger middleware.
-                app.UseSwaggerUI(c => c.SwaggerEndpoint(MarketUtilities.SwaggerUrlEndpoint, MarketUtilities.SwaggerNameEndpoint)); // Configures the Swagger UI endpoint.
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint(MarketUtilities.SwaggerUrlEndpointV1, MarketUtilities.SwaggerNameEndpointV1);
+                    c.SwaggerEndpoint(MarketUtilities.SwaggerUrlEndpointV2, MarketUtilities.SwaggerNameEndpointV2);
+                });
             }
 
-            app.UseRouting(); // Enables routing capabilities for the app.
-
-            app.UseAuthentication(); // Asegura que las solicitudes sean autenticadas
+            app.UseMiddleware<MarketHandlingMiddleware>();
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            // Configures the endpoints for the controllers.
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers(); // Maps controller routes to the endpoints.
+                endpoints.MapControllers();
             });
         }
     }

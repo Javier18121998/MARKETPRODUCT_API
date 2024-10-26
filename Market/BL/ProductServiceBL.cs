@@ -2,10 +2,12 @@
 using Market.DAL.IDAL;
 using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
+using Market.Exceptions;
 using Market.Utilities.MQServices.IManageServices;
 using Market.Utilities.MQServices.IProduceServices;
 using Market.Utilities.MQServices.ManageServices;
 using Market.Utilities.MQServices.MQModels;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +43,14 @@ namespace Market.BL
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 return productCreated;
+            }
+            catch (CustomException cex)
+            {
+                #region Broker Message insertions by MQProducerMessageLogger
+                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
+                #endregion
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
             }
             catch (Exception ex)
             {

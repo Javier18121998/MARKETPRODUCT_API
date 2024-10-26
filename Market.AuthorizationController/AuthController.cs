@@ -8,8 +8,10 @@ using System.Text;
 
 namespace MARKETPRODUCT_API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("2.0")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;

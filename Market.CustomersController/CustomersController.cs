@@ -4,15 +4,15 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 
-namespace Market.CartsController
+namespace Market.CustomersController
 {
     [ApiVersion("2.0")]
-    public class CartsController : MarketProductControllerBase<CartsController>
+    public class CustomersController : MarketProductControllerBase<CustomersController>
     {
-        public CartsController(ILogger<CartsController> logger) 
+        public CustomersController(ILogger<CustomersController> logger)
             : base(logger)
         {
-            
+
         }
 
         [HttpGet]
