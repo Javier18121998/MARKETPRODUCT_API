@@ -1,4 +1,6 @@
-﻿using Market.Utilities.BaseControllers;
+﻿using Market.DAL.IDAL;
+using Market.DataModels.EFModels;
+using Market.Utilities.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -9,10 +11,11 @@ namespace Market.CustomersController
     [ApiVersion("2.0")]
     public class CustomersController : MarketProductControllerBase<CustomersController>
     {
-        public CustomersController(ILogger<CustomersController> logger)
+        private readonly ICustomerService _customerService;
+        public CustomersController(ILogger<CustomersController> logger, ICustomerService customerService)
             : base(logger)
         {
-
+            _customerService = customerService;
         }
 
         [HttpGet]
@@ -34,9 +37,10 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerRegistratioAsync()
+        public async Task<ActionResult> CustomerRegistratioAsync([FromBody] CustomerRegistration registration)
         {
-            return Ok();
+            var customer = await _customerService.RegisterCustomerAsync(registration);
+            return Ok(customer);
         }
 
         [HttpPost("login")]
@@ -46,9 +50,14 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerLoginAccesAsync()
+        public async Task<ActionResult> CustomerLoginAccesAsync([FromBody] CustomerLogin login)
         {
-            return Ok();
+            var token = await _customerService.AuthenticateCustomerAsync(login);
+            if (token == null)
+            {
+                return Unauthorized(new { message = "Invalid email or password." });
+            }
+            return Ok(new { token });
         }
 
         [HttpPut]
