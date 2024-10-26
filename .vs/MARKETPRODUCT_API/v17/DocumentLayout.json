@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\dal\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\dal\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\dal\\idal\\icustomerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\dal\\idal\\icustomerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{82ECD7B3-7EBE-4372-A140-D16011DE3723}|Market.Services\\Market.Services.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.services\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{82ECD7B3-7EBE-4372-A140-D16011DE3723}|Market.Services\\Market.Services.csproj|solutionrelative:market.services\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -15,10 +23,6 @@
       "RelativeMoniker": "D:0:0:{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}|Market.CustomersController\\Market.CustomersController.csproj|solutionrelative:market.customerscontroller\\customerscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\dal\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\dal\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\datamodels\\efmodels\\customerregistration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\datamodels\\efmodels\\customerregistration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -29,10 +33,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\datamodels\\dtos\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\datamodels\\dtos\\jwtsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\dal\\idal\\icustomerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\dal\\idal\\icustomerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\datamodels\\dtos\\customer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -58,11 +58,15 @@
       "DocumentGroups": [
         {
           "DockedHeight": 417,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 7,
           "Children": [
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "JwtSettings.cs",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DataModels\\DTos\\JwtSettings.cs",
               "RelativeDocumentMoniker": "Market\\DataModels\\DTos\\JwtSettings.cs",
@@ -75,7 +79,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.Services\\appsettings.json",
               "RelativeDocumentMoniker": "Market.Services\\appsettings.json",
@@ -87,12 +91,8 @@
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "CustomerLogin.cs",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DataModels\\EFModels\\CustomerLogin.cs",
               "RelativeDocumentMoniker": "Market\\DataModels\\EFModels\\CustomerLogin.cs",
@@ -105,7 +105,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "CustomerRegistration.cs",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DataModels\\EFModels\\CustomerRegistration.cs",
               "RelativeDocumentMoniker": "Market\\DataModels\\EFModels\\CustomerRegistration.cs",
@@ -131,7 +131,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "ICustomerService.cs",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\IDAL\\ICustomerService.cs",
               "RelativeDocumentMoniker": "Market\\DAL\\IDAL\\ICustomerService.cs",
@@ -144,13 +144,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "CustomerService.cs",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\CustomerService.cs",
               "RelativeDocumentMoniker": "Market\\DAL\\CustomerService.cs",
               "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\CustomerService.cs",
               "RelativeToolTip": "Market\\DAL\\CustomerService.cs",
-              "ViewState": "AgIAACUAAAAAAAAAAAAowEAAAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAqwEAAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-26T20:19:55.192Z",
               "EditorCaption": ""
@@ -181,13 +181,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Startup.cs",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.Services\\Startup.cs",
               "RelativeDocumentMoniker": "Market.Services\\Startup.cs",
               "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.Services\\Startup.cs",
               "RelativeToolTip": "Market.Services\\Startup.cs",
-              "ViewState": "AgIAABwAAAAAAAAAAAAUwDMAAABNAAAAAAAAAA==",
+              "ViewState": "AgIAACkAAAAAAAAAAAAqwC8AAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-26T14:43:00.768Z",
               "EditorCaption": ""
@@ -202,11 +202,12 @@
               "RelativeToolTip": "Market.ProductsController\\ProductsController.cs",
               "ViewState": "AgIAABcAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-26T14:39:26.092Z"
+              "WhenOpened": "2024-10-26T14:39:26.092Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "CustomersController.cs",
               "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CustomersController\\CustomersController.cs",
               "RelativeDocumentMoniker": "Market.CustomersController\\CustomersController.cs",
