@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Market.Services", "Market.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Market.AuthorizationController", "Market.AuthorizationController\Market.AuthorizationController.csproj", "{FA6E3894-B8C4-45DC-80F5-613DE2C88DBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Market.CartsController", "Market.CartsController\Market.CartsController.csproj", "{20348394-16DD-4EF4-9E4F-A347020A3858}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Market.CartsController", "Market.CartsController\Market.CartsController.csproj", "{20348394-16DD-4EF4-9E4F-A347020A3858}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Market.CustomersController", "Market.CustomersController\Market.CustomersController.csproj", "{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{20348394-16DD-4EF4-9E4F-A347020A3858}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20348394-16DD-4EF4-9E4F-A347020A3858}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20348394-16DD-4EF4-9E4F-A347020A3858}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

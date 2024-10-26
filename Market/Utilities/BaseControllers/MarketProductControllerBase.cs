@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Market.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace Market.Utilities.BaseControllers
 {
@@ -21,6 +20,28 @@ namespace Market.Utilities.BaseControllers
         public MarketProductControllerBase(ILogger<TController> logger)
         {
             _logger = logger;
+        }
+
+        protected ActionResult HandleException(Exception e)
+        {
+            if (e is CustomException customEx)
+            {
+                var errorCode = customEx.ErrorCode ?? "UnknownErrorCode";
+                var problemDetails = new
+                {
+                    Title = customEx.Message,
+                    Detail = customEx.Message,
+                    ErrorCode = errorCode
+                };
+
+                return Problem(
+                    detail: System.Text.Json.JsonSerializer.Serialize(problemDetails),
+                    statusCode: (int)customEx.StatusCode
+                );
+            }
+
+            _logger.LogError($"An unexpected error occurred: {e.Message}");
+            return Problem(detail: "An unexpected error occurred. Please try again later.", statusCode: (int)HttpStatusCode.InternalServerError);
         }
     }
 }

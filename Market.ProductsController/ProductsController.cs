@@ -2,6 +2,7 @@
 using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
 using Market.DataValidation.DataValidation;
+using Market.Exceptions;
 using Market.Utilities.BaseControllers;
 using Market.Utilities.MQServices.MQModels;
 using Microsoft.AspNetCore.Authorization;
@@ -184,7 +185,7 @@ namespace Market.ProductsController
         /// </summary>
         /// <param name="product">Product details.</param>
         /// <returns>The created product.</returns>
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         [SwaggerOperation(
             Summary = "Crear un nuevo producto",
@@ -221,14 +222,15 @@ namespace Market.ProductsController
                 _logger.LogInformation($"The product: {createdProduct.ToString()} was created succesfully");
                 return Created(string.Empty, createdProduct);
             }
-            catch (Exception ex)
+            catch (CustomException cex)
+            {
+                _logger.LogError(cex, "Error creating a new product.");
+                throw;
+            }
+            catch(Exception ex)
             {
                 _logger.LogError(ex, "Error creating a new product.");
-                if (ex.Message.Equals("This product is already exists in the system."))
-                {
-                    return BadRequest(ex.Message);
-                }
-                return StatusCode(500, "An error occurred while creating the product.");
+                return HandleException(ex);
             }
         }
 

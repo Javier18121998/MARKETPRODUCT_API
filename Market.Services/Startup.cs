@@ -1,12 +1,5 @@
-﻿using MARKETPRODUCT_API.Data;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-using MARKETPRODUCT_API.Services.IServices;
-using MARKETPRODUCT_API.Services;
-using MARKETPRODUCT_API.Messaging.MessageProducer;
-using MARKETPRODUCT_API.MARKETUtilities;
-using MARKETPRODUCT_API.Data.ModelValidations.IDataModelValidations;
-using MARKETPRODUCT_API.Data.ModelValidations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -14,6 +7,8 @@ using Market.Market.Models;
 using Market.OrdersController;
 using Market.ProductsController;
 using MARKETPRODUCT_API.Controllers;
+using Market.Exceptions.Middlewares;
+using MARKETPRODUCT_API.MARKETUtilities;
 //using Market.Market.Models;
 
 namespace MARKETPRODUCT_API
@@ -125,7 +120,6 @@ namespace MARKETPRODUCT_API
             services.AddScoped<Market.DataValidation.IDataBaseValidations.IOrderValidationService, Market.DataValidation.DataBaseValidations.OrderValidationService>();
             services.AddScoped<Market.Utilities.MQServices.IManageServices.IMQManagerService, Market.Utilities.MQServices.ManageServices.MQManagerService>();
             services.AddScoped<Market.Utilities.MQServices.IProduceServices.IMQProducer, Market.Utilities.MQServices.ProduceServices.MQProducer>();
-            services.AddSingleton<MQProducer>(); // Registers the message queue producer as a singleton.
         }
 
         /// <summary>
@@ -143,6 +137,8 @@ namespace MARKETPRODUCT_API
                 app.UseSwagger(); // Enables the Swagger middleware.
                 app.UseSwaggerUI(c => c.SwaggerEndpoint(MarketUtilities.SwaggerUrlEndpoint, MarketUtilities.SwaggerNameEndpoint)); // Configures the Swagger UI endpoint.
             }
+
+            app.UseMiddleware<MarketHandlingMiddleware>();
 
             app.UseRouting(); // Enables routing capabilities for the app.
 
