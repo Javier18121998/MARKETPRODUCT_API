@@ -103,6 +103,8 @@ namespace MARKETPRODUCT_API
                     Description = MarketUtilities.SwaggerDocDescriptionV2
                 });
 
+                c.EnableAnnotations(); // Habilitar anotaciones
+
                 c.DocInclusionPredicate((version, apiDesc) =>
                 {
                     if (!apiDesc.GroupName.Equals(version, StringComparison.OrdinalIgnoreCase)) return false;
@@ -171,16 +173,27 @@ namespace MARKETPRODUCT_API
                     c.SwaggerEndpoint(MarketUtilities.SwaggerUrlEndpointV2, MarketUtilities.SwaggerNameEndpointV2);
                 });
             }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error"); // Manejo de errores en producción
+                app.UseHsts(); // Agregar seguridad adicional en producción
+            }
 
-            app.UseMiddleware<MarketHandlingMiddleware>();
+            app.UseMiddleware<MarketHandlingMiddleware>(); // Middleware personalizado
+
+            app.UseHttpsRedirection(); // Redirige a HTTPS si es necesario
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // CORS: habilitar solo si es necesario
+            // app.UseCors("MiPoliticaCors");
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
+
     }
 }

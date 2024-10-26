@@ -28,6 +28,6 @@
 
         // Descripciones para Swagger
         public const string SwaggerDocDescription = "API to understand the microservices communication with Message Brokers-RabbitMQ";
-        public const string SwaggerDocDescriptionV2 = "API v2 with additional endpoints for Carts and Customers";
+        public const string SwaggerDocDescriptionV2 = "Advanced Phase 2.0";
     }
 }
