@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Market.AuthorizationController.AuthServices;
+using Market.AuthorizationController.AuthConfigurations;
+using Market.AuthorizationController.AuthServices.UserRoleServices.IUserServices;
+using Market.AuthorizationController.AuthServices.UserRoleServices.UserServices;
 
 namespace MARKETPRODUCT_API
 {
@@ -47,6 +51,10 @@ namespace MARKETPRODUCT_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            #region JWTConfiguration Auth
+            services.ConfigureJwtSettings(Configuration);
+            #endregion
 
             // Configura autenticación con JWT
             services.AddAuthentication(options =>
@@ -140,7 +148,13 @@ namespace MARKETPRODUCT_API
                 options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
             );
 
+            //Adding JWTBEarer services
+            #region JWTConfiguration Auth
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            #endregion
+
             // Registro de servicios de aplicación
+            #region Registry of services application
             services.AddScoped<Market.BL.IBL.IOrderServiceBL, Market.BL.OrderServiceBL>();
             services.AddScoped<Market.BL.IBL.IProductServiceBL, Market.BL.ProductServiceBL>();
             services.AddScoped<Market.DAL.IDAL.IProductService, Market.DAL.ProductService>();
@@ -149,6 +163,9 @@ namespace MARKETPRODUCT_API
             services.AddScoped<Market.DataValidation.IDataBaseValidations.IOrderValidationService, Market.DataValidation.DataBaseValidations.OrderValidationService>();
             services.AddScoped<Market.Utilities.MQServices.IManageServices.IMQManagerService, Market.Utilities.MQServices.ManageServices.MQManagerService>();
             services.AddScoped<Market.Utilities.MQServices.IProduceServices.IMQProducer, Market.Utilities.MQServices.ProduceServices.MQProducer>();
+            services.AddScoped<IUserService, UserService>();
+            #endregion
+
         }
 
 
