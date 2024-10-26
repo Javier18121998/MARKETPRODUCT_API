@@ -11,8 +11,8 @@ namespace Market.Utilities.BaseControllers
     /// Base class for all controllers in the Market Product API, providing common logging functionality.
     /// </summary>
     /// <typeparam name="TController">The type of the controller that derives from this base class.</typeparam>
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class MarketProductControllerBase<TController> : ControllerBase
     {
         protected readonly ILogger<TController> _logger;

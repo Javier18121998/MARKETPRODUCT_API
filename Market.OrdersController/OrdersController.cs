@@ -14,6 +14,7 @@ namespace Market.OrdersController
     /// <summary>
     /// Controll all the orders and Manage their behaviors via MarketProductControllerBase route
     /// </summary>
+    [ApiVersion("1.0")]
     public class OrdersController : MarketProductControllerBase<OrdersController>
     {
         private readonly IOrderServiceBL _orderServiceBL;

@@ -6,6 +6,7 @@ using System.Net;
 
 namespace Market.CustomersController
 {
+    [ApiVersion("2.0")]
     public class CustomersController : MarketProductControllerBase<CustomersController>
     {
         public CustomersController(ILogger<CustomersController> logger)

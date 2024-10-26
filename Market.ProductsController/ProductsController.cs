@@ -17,6 +17,7 @@ namespace Market.ProductsController
     /// <summary>
     /// Controller for handling product-related operations.
     /// </summary>
+    [ApiVersion("1.0")]
     public class ProductsController : MarketProductControllerBase<ProductsController>
     {
         private readonly IProductServiceBL _productServiceBL;
@@ -185,7 +186,7 @@ namespace Market.ProductsController
         /// </summary>
         /// <param name="product">Product details.</param>
         /// <returns>The created product.</returns>
-        //[Authorize]
+        [Authorize]
         [HttpPost]
         [SwaggerOperation(
             Summary = "Crear un nuevo producto",
