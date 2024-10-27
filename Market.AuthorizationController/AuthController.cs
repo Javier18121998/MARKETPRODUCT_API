@@ -1,61 +1,43 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Market.AuthorizationController.AuthModels;
+using Market.AuthorizationController.AuthServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace MARKETPRODUCT_API.Controllers
 {
+    /// <summary>
+    /// Controller responsible for handling authentication requests.
+    /// </summary>
     [ApiController]
     [ApiVersion("2.0")]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAuthenticationService _authenticationService;
 
-        public AuthController(IConfiguration configuration)
+        /// <summary>
+        /// Initializes a new instance of the AuthController with the specified authentication service.
+        /// </summary>
+        /// <param name="authenticationService">The authentication service for handling user login.</param>
+        public AuthController(IAuthenticationService authenticationService)
         {
-            _configuration = configuration;
+            _authenticationService = authenticationService;
         }
 
+        /// <summary>
+        /// Authenticates the user and generates a JWT token if credentials are valid.
+        /// </summary>
+        /// <param name="userLogin">The user login credentials.</param>
+        /// <returns>An IActionResult containing the generated JWT token or an unauthorized response.</returns>
         [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLogin userLogin)
         {
-            // Valida el usuario y contraseña de forma personalizada o usando servicios
-            if (userLogin.Username == "test" && userLogin.Password == "password")
-            {
-                var token = GenerateJwtToken(userLogin.Username);
-                return Ok(new { token });
-            }
-            return Unauthorized();
-        }
+            var token = _authenticationService.Authenticate(userLogin.Username, userLogin.Password);
+            if (token == null) return Unauthorized(new { message = "Invalid username or password" });
 
-        private string GenerateJwtToken(string username)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: new[]
-                {
-                new Claim(JwtRegisteredClaimNames.Sub, username)
-                },
-                expires: DateTime.Now.AddMinutes(120),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return Ok(new { token });
         }
     }
-    public class UserLogin
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
-
 }
