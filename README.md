@@ -31,22 +31,19 @@ Aquí se listan las dependencias clave del proyecto y sus versiones:
 - [Licencia](#licencia)
 
 
----
-
 ## API Endpoints 📌
 
 ### Crear un Nuevo Producto
 
-**URL:** `/api/productos`  
-**Método:** `POST`  
-**Autorización:** 🔒 `Bearer Token` (Requiere autorización)
+- **Ruta:** `api/v1/Products`  
+- **Método:** `POST`  
+- **Autorización:** 🔒 Requiere `Bearer Token`
 
 **Descripción:**  
-Este endpoint permite crear un nuevo producto en el sistema y almacenarlo en la base de datos.
+Permite crear un nuevo producto y almacenarlo en la base de datos.
 
----
-
-#### Esquema de Solicitud
+#### Modelo de Solicitud
+La solicitud espera un objeto JSON con los siguientes campos:
 
 ```json
 {
@@ -55,6 +52,7 @@ Este endpoint permite crear un nuevo producto en el sistema y almacenarlo en la 
   "price": 99.99,
   "size": "Tamaño del Producto"
 }
+
 ```
 
 ### Create Order by Product Name and Size
