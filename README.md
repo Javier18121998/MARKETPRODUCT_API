@@ -1,8 +1,10 @@
 # MARKETPRODUCT_API
 
-API para la gestión de productos y creación de órdenes en un entorno de comercio electrónico, con versionamiento de endpoints para una mayor flexibilidad.
+## Descripción
+**MARKETPRODUCT_API** es una API RESTful para la gestión de productos y la creación de órdenes en un mercado en línea. Incluye endpoints para crear nuevos productos y realizar pedidos basados en el nombre y tamaño del producto.
 
 ## Dependencias del Proyecto
+Aquí se listan las dependencias clave del proyecto y sus versiones:
 
 ![Microsoft.AspNetCore.Authentication.JwtBearer](https://img.shields.io/badge/Microsoft.AspNetCore.Authentication.JwtBearer-8.0.10-blue)
 ![Microsoft.AspNetCore.Mvc](https://img.shields.io/badge/Microsoft.AspNetCore.Mvc-2.2.0-blue)
@@ -15,6 +17,19 @@ API para la gestión de productos y creación de órdenes en un entorno de comer
 ![Swashbuckle.AspNetCore](https://img.shields.io/badge/Swashbuckle.AspNetCore-6.4.0-blue)
 ![Swashbuckle.AspNetCore.Annotations](https://img.shields.io/badge/Swashbuckle.AspNetCore.Annotations-6.9.0-blue)
 ![System.IdentityModel.Tokens.Jwt](https://img.shields.io/badge/System.IdentityModel.Tokens.Jwt-8.1.2-blue)
+
+---
+
+## Tabla de Contenidos
+- [Descripción](#descripción)
+- [Dependencias del Proyecto](#dependencias-del-proyecto)
+- [Instalación](#instalación)
+- [API Endpoints](#api-endpoints)
+  - [Crear un Nuevo Producto](#crear-un-nuevo-producto)
+  - [Crear Orden por Nombre y Tamaño del Producto](#crear-orden-por-nombre-y-tamaño-del-producto)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
+
 
 ---
 
