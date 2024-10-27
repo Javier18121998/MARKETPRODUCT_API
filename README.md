@@ -52,9 +52,8 @@ La solicitud espera un objeto JSON con los siguientes campos:
   "price": 99.99,
   "size": "Tamaño del Producto"
 }
-
 ```
-
+---
 ### Create Order by Product Name and Size
 
 - **Endpoint**: `POST /CreateByNameAndSize`
