@@ -29,8 +29,26 @@ Aquí se listan las dependencias clave del proyecto y sus versiones:
   - [Crear Orden por Nombre y Tamaño del Producto](#crear-orden-por-nombre-y-tamaño-del-producto)
 - [Contribución](#contribución)
 - [Licencia](#licencia)
-
-
+--
+## Instalation
+Configuration insider locally, follow the next steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/MARKETPRODUCT_API.git
+   ```
+2. Surface to the dir:
+   ```bash
+   cd MARKETPRODUCT_API
+   ```
+3. Restore the packages:
+   ```bash
+   dotnet restore
+   ```
+4. Run the project
+   ```bash
+   dotnet run
+   ```
+--
 ## API Endpoints 📌
 
 ### Create Product wih Name and Size
