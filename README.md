@@ -1,6 +1,10 @@
-﻿# MARKETPRODUCT_API
+# MARKETPRODUCT_API
 
-# Dependencias del Proyecto
+## Descripción
+**MARKETPRODUCT_API** es una API RESTful para la gestión de productos y la creación de órdenes en un mercado en línea. Incluye endpoints para crear nuevos productos y realizar pedidos basados en el nombre y tamaño del producto.
+
+## Dependencias del Proyecto
+Aquí se listan las dependencias clave del proyecto y sus versiones:
 
 ![Microsoft.AspNetCore.Authentication.JwtBearer](https://img.shields.io/badge/Microsoft.AspNetCore.Authentication.JwtBearer-8.0.10-blue)
 ![Microsoft.AspNetCore.Mvc](https://img.shields.io/badge/Microsoft.AspNetCore.Mvc-2.2.0-blue)
@@ -14,20 +18,50 @@
 ![Swashbuckle.AspNetCore.Annotations](https://img.shields.io/badge/Swashbuckle.AspNetCore.Annotations-6.9.0-blue)
 ![System.IdentityModel.Tokens.Jwt](https://img.shields.io/badge/System.IdentityModel.Tokens.Jwt-8.1.2-blue)
 
-## API Endpoints 📌
-
-### Crear un Nuevo Producto
-
-**URL:** `/api/productos`  
-**Método:** `POST`  
-**Autorización:** 🔒 `Bearer Token` (Requiere autorización)
-
-**Descripción:**  
-Este endpoint permite crear un nuevo producto en el sistema y almacenarlo en la base de datos.
-
 ---
 
-#### Esquema de Solicitud
+## Tabla de Contenidos
+- [Descripción](#descripción)
+- [Dependencias del Proyecto](#dependencias-del-proyecto)
+- [Instalación](#instalación)
+- [API Endpoints](#api-endpoints)
+  - [Crear un Nuevo Producto](#crear-un-nuevo-producto)
+  - [Crear Orden por Nombre y Tamaño del Producto](#crear-orden-por-nombre-y-tamaño-del-producto)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
+---
+## Instalation
+Configuration insider locally, follow the next steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/MARKETPRODUCT_API.git
+   ```
+2. Surface to the dir:
+   ```bash
+   cd MARKETPRODUCT_API
+   ```
+3. Restore the packages:
+   ```bash
+   dotnet restore
+   ```
+4. Run the project
+   ```bash
+   dotnet run
+   ```
+---
+## API Endpoints 📌
+
+### Create Product wih Name and Size
+
+- **Ruta:** `api/v1/Products`  
+- **Methood:** `POST`  
+- **Autorización:** 🔒 Requiere `Bearer Token`
+
+**Description:**  
+Permite crear un nuevo producto y almacenarlo en la base de datos.
+
+#### Sended Request
+La solicitud espera un objeto JSON con los siguientes campos:
 
 ```json
 {
@@ -37,30 +71,41 @@ Este endpoint permite crear un nuevo producto en el sistema y almacenarlo en la 
   "size": "Tamaño del Producto"
 }
 ```
-
 ### Create Order by Product Name and Size
 
-- **Endpoint**: `POST /CreateByNameAndSize`
-- **Authorization**: Required
+- **Route:** `api/v1/Orders`
+- **Methood:** `POST`
+- **Autorización:** 🔒 Requiere `Bearer Token`
 
-#### Description
+**Description:**  
+Permite crear un nuevo producto y almacenarlo en la base de datos.
 
-Crea una nueva orden utilizando el nombre y el tamaño de un producto. Este endpoint permite a los usuarios especificar un producto y su tamaño para realizar un pedido.
-
-#### Request Body
-
-La solicitud debe incluir un objeto JSON con los siguientes parámetros:
-
-- `ProductName` (string): El nombre del producto que se desea ordenar.
-- `ProductSize` (string): El tamaño del producto que se desea ordenar.
-- `Quantity` (int): La cantidad del producto que se desea ordenar.
-
-**Ejemplo de cuerpo de solicitud:**
+#### Sended Request
+La solicitud espera un objeto JSON con los siguientes campos:
 
 ```json
 {
-  "ProductName": "Camisa",
-  "ProductSize": "M",
-  "Quantity": 2
+  "ProductName": "Nombre del Producto",
+  "ProductSize": "Tamaño del Producto",
+  "Quantity": 35
 }
 ```
+---
+## Contribución
+
+¡Contribuciones son bienvenidas! Para colaborar en el proyecto, sigue estos pasos:
+
+1. Fork a branch of this repositori from develop branch.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/New functionality
+   ```
+3. Make a commit:
+  ```bash
+   git commit -m "New functionality"
+  ```
+4. Do a push into the branch you created:
+  ```
+   git push origin feature/New functionality
+  ```
+5. Open a Pull Request 
