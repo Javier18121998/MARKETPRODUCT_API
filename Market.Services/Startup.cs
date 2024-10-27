@@ -4,24 +4,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Market.Market.Models;
-using Market.OrdersController;
-using Market.ProductsController;
-using MARKETPRODUCT_API.Controllers;
 using Market.Exceptions.Middlewares;
 using MARKETPRODUCT_API.MARKETUtilities;
 using Microsoft.AspNetCore.Mvc;
-//using Market.Market.Models;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-<<<<<<< HEAD
 using Market.DataModels.DTos;
-=======
-using Market.AuthorizationController.AuthServices;
 using Market.AuthorizationController.AuthConfigurations;
 using Market.AuthorizationController.AuthServices.UserRoleServices.IUserServices;
 using Market.AuthorizationController.AuthServices.UserRoleServices.UserServices;
->>>>>>> 6a5accf7829e896bb71804555f3051c405ed2217
+using Market.AuthorizationController.AuthServices;
 
 namespace MARKETPRODUCT_API
 {
@@ -56,13 +46,10 @@ namespace MARKETPRODUCT_API
         {
             services.AddControllers();
 
-<<<<<<< HEAD
             services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
-=======
             #region JWTConfiguration Auth
             services.ConfigureJwtSettings(Configuration);
             #endregion
->>>>>>> 6a5accf7829e896bb71804555f3051c405ed2217
 
             // Configura autenticación con JWT
             services.AddAuthentication(options =>
@@ -173,13 +160,11 @@ namespace MARKETPRODUCT_API
             services.AddScoped<Market.DataValidation.IDataBaseValidations.IOrderValidationService, Market.DataValidation.DataBaseValidations.OrderValidationService>();
             services.AddScoped<Market.Utilities.MQServices.IManageServices.IMQManagerService, Market.Utilities.MQServices.ManageServices.MQManagerService>();
             services.AddScoped<Market.Utilities.MQServices.IProduceServices.IMQProducer, Market.Utilities.MQServices.ProduceServices.MQProducer>();
-<<<<<<< HEAD
             services.AddScoped<Market.DAL.IDAL.ICustomerService, Market.DAL.CustomerService>();
-=======
+
             services.AddScoped<IUserService, UserService>();
             #endregion
 
->>>>>>> 6a5accf7829e896bb71804555f3051c405ed2217
         }
 
 
