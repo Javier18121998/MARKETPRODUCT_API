@@ -4,16 +4,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Market.Market.Models;
-using Market.OrdersController;
-using Market.ProductsController;
-using MARKETPRODUCT_API.Controllers;
 using Market.Exceptions.Middlewares;
 using MARKETPRODUCT_API.MARKETUtilities;
 using Microsoft.AspNetCore.Mvc;
-//using Market.Market.Models;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Market.DataModels.DTos;
+using Market.AuthorizationController.AuthConfigurations;
+using Market.AuthorizationController.AuthServices.UserRoleServices.IUserServices;
+using Market.AuthorizationController.AuthServices.UserRoleServices.UserServices;
+using Market.AuthorizationController.AuthServices;
 
 namespace MARKETPRODUCT_API
 {
@@ -47,6 +45,11 @@ namespace MARKETPRODUCT_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
+            #region JWTConfiguration Auth
+            services.ConfigureJwtSettings(Configuration);
+            #endregion
 
             // Configura autenticación con JWT
             services.AddAuthentication(options =>
@@ -103,6 +106,8 @@ namespace MARKETPRODUCT_API
                     Description = MarketUtilities.SwaggerDocDescriptionV2
                 });
 
+                c.EnableAnnotations(); // Habilitar anotaciones
+
                 c.DocInclusionPredicate((version, apiDesc) =>
                 {
                     if (!apiDesc.GroupName.Equals(version, StringComparison.OrdinalIgnoreCase)) return false;
@@ -140,7 +145,13 @@ namespace MARKETPRODUCT_API
                 options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
             );
 
+            //Adding JWTBEarer services
+            #region JWTConfiguration Auth
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            #endregion
+
             // Registro de servicios de aplicación
+            #region Registry of services application
             services.AddScoped<Market.BL.IBL.IOrderServiceBL, Market.BL.OrderServiceBL>();
             services.AddScoped<Market.BL.IBL.IProductServiceBL, Market.BL.ProductServiceBL>();
             services.AddScoped<Market.DAL.IDAL.IProductService, Market.DAL.ProductService>();
@@ -149,6 +160,11 @@ namespace MARKETPRODUCT_API
             services.AddScoped<Market.DataValidation.IDataBaseValidations.IOrderValidationService, Market.DataValidation.DataBaseValidations.OrderValidationService>();
             services.AddScoped<Market.Utilities.MQServices.IManageServices.IMQManagerService, Market.Utilities.MQServices.ManageServices.MQManagerService>();
             services.AddScoped<Market.Utilities.MQServices.IProduceServices.IMQProducer, Market.Utilities.MQServices.ProduceServices.MQProducer>();
+            services.AddScoped<Market.DAL.IDAL.ICustomerService, Market.DAL.CustomerService>();
+
+            services.AddScoped<IUserService, UserService>();
+            #endregion
+
         }
 
 
@@ -171,16 +187,27 @@ namespace MARKETPRODUCT_API
                     c.SwaggerEndpoint(MarketUtilities.SwaggerUrlEndpointV2, MarketUtilities.SwaggerNameEndpointV2);
                 });
             }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error"); // Manejo de errores en producción
+                app.UseHsts(); // Agregar seguridad adicional en producción
+            }
 
-            app.UseMiddleware<MarketHandlingMiddleware>();
+            app.UseMiddleware<MarketHandlingMiddleware>(); // Middleware personalizado
+
+            app.UseHttpsRedirection(); // Redirige a HTTPS si es necesario
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // CORS: habilitar solo si es necesario
+            // app.UseCors("MiPoliticaCors");
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
+
     }
 }
