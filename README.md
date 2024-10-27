@@ -33,16 +33,16 @@ Aquí se listan las dependencias clave del proyecto y sus versiones:
 
 ## API Endpoints 📌
 
-### Crear un Nuevo Producto
+### Create Product wih Name and Size
 
 - **Ruta:** `api/v1/Products`  
-- **Método:** `POST`  
+- **Methood:** `POST`  
 - **Autorización:** 🔒 Requiere `Bearer Token`
 
-**Descripción:**  
+**Description:**  
 Permite crear un nuevo producto y almacenarlo en la base de datos.
 
-#### Modelo de Solicitud
+#### Sended Request
 La solicitud espera un objeto JSON con los siguientes campos:
 
 ```json
@@ -53,30 +53,22 @@ La solicitud espera un objeto JSON con los siguientes campos:
   "size": "Tamaño del Producto"
 }
 ```
----
 ### Create Order by Product Name and Size
 
-- **Endpoint**: `POST /CreateByNameAndSize`
-- **Authorization**: Required
+- **Route:** `api/v1/Orders`
+- **Methood:** `POST`
+- **Autorización:** 🔒 Requiere `Bearer Token`
 
-#### Description
+**Description:**  
+Permite crear un nuevo producto y almacenarlo en la base de datos.
 
-Crea una nueva orden utilizando el nombre y el tamaño de un producto. Este endpoint permite a los usuarios especificar un producto y su tamaño para realizar un pedido.
-
-#### Request Body
-
-La solicitud debe incluir un objeto JSON con los siguientes parámetros:
-
-- `ProductName` (string): El nombre del producto que se desea ordenar.
-- `ProductSize` (string): El tamaño del producto que se desea ordenar.
-- `Quantity` (int): La cantidad del producto que se desea ordenar.
-
-**Ejemplo de cuerpo de solicitud:**
+#### Sended Request
+La solicitud espera un objeto JSON con los siguientes campos:
 
 ```json
 {
-  "ProductName": "Camisa",
-  "ProductSize": "M",
-  "Quantity": 2
+  "ProductName": "Nombre del Producto",
+  "ProductSize": "Tamaño del Producto",
+  "Quantity": 35
 }
 ```
