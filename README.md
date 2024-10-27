@@ -1,6 +1,8 @@
-﻿# MARKETPRODUCT_API
+# MARKETPRODUCT_API
 
-# Dependencias del Proyecto
+API para la gestión de productos y creación de órdenes en un entorno de comercio electrónico, con versionamiento de endpoints para una mayor flexibilidad.
+
+## Dependencias del Proyecto
 
 ![Microsoft.AspNetCore.Authentication.JwtBearer](https://img.shields.io/badge/Microsoft.AspNetCore.Authentication.JwtBearer-8.0.10-blue)
 ![Microsoft.AspNetCore.Mvc](https://img.shields.io/badge/Microsoft.AspNetCore.Mvc-2.2.0-blue)
@@ -13,6 +15,8 @@
 ![Swashbuckle.AspNetCore](https://img.shields.io/badge/Swashbuckle.AspNetCore-6.4.0-blue)
 ![Swashbuckle.AspNetCore.Annotations](https://img.shields.io/badge/Swashbuckle.AspNetCore.Annotations-6.9.0-blue)
 ![System.IdentityModel.Tokens.Jwt](https://img.shields.io/badge/System.IdentityModel.Tokens.Jwt-8.1.2-blue)
+
+---
 
 ## API Endpoints 📌
 
