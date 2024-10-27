@@ -90,3 +90,22 @@ La solicitud espera un objeto JSON con los siguientes campos:
   "Quantity": 35
 }
 ```
+---
+## Contribución
+
+¡Contribuciones son bienvenidas! Para colaborar en el proyecto, sigue estos pasos:
+
+1. Fork a branch of this repositori from develop branch.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/New functionality
+   ```
+3. Make a commit:
+  ```bash
+   git commit -m "New functionality"
+  ```
+4. Do a push into the branch you created:
+  ```
+   git push origin feature/New functionality
+  ```
+5. Open a Pull Request 
