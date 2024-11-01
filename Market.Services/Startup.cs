@@ -145,6 +145,8 @@ namespace MARKETPRODUCT_API
                 options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
             );
 
+            services.AddHttpContextAccessor();
+
             //Adding JWTBEarer services
             #region JWTConfiguration Auth
             services.AddScoped<IAuthenticationService, AuthenticationService>();

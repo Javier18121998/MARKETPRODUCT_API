@@ -3,28 +3,36 @@
   "WorkspaceRootPath": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FA6E3894-B8C4-45DC-80F5-613DE2C88DBB}|Market.AuthorizationController\\Market.AuthorizationController.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.authorizationcontroller\\market.authorizationcontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{FA6E3894-B8C4-45DC-80F5-613DE2C88DBB}|Market.AuthorizationController\\Market.AuthorizationController.csproj|solutionrelative:market.authorizationcontroller\\market.authorizationcontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\dal\\idal\\icartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\dal\\idal\\icartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{82ECD7B3-7EBE-4372-A140-D16011DE3723}|Market.Services\\Market.Services.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.services\\market.services.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{82ECD7B3-7EBE-4372-A140-D16011DE3723}|Market.Services\\Market.Services.csproj|solutionrelative:market.services\\market.services.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\dal\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\dal\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6E0EFDE7-67BA-44D7-9510-5F6C2339B4AD}|Market.ProductsController\\Market.ProductsController.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.productscontroller\\market.productscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{6E0EFDE7-67BA-44D7-9510-5F6C2339B4AD}|Market.ProductsController\\Market.ProductsController.csproj|solutionrelative:market.productscontroller\\market.productscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\dal\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\dal\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E4269B61-1910-4A44-A62B-D9BAB659C0E1}|Market.OrdersController\\Market.OrdersController.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.orderscontroller\\market.orderscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{E4269B61-1910-4A44-A62B-D9BAB659C0E1}|Market.OrdersController\\Market.OrdersController.csproj|solutionrelative:market.orderscontroller\\market.orderscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}|Market.CustomersController\\Market.CustomersController.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.customerscontroller\\customerscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}|Market.CustomersController\\Market.CustomersController.csproj|solutionrelative:market.customerscontroller\\customerscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}|Market.CustomersController\\Market.CustomersController.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.customerscontroller\\market.customerscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{BDD70E6B-12EB-48A9-A8E8-51EF35D2FEF5}|Market.CustomersController\\Market.CustomersController.csproj|solutionrelative:market.customerscontroller\\market.customerscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{82ECD7B3-7EBE-4372-A140-D16011DE3723}|Market.Services\\Market.Services.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.services\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82ECD7B3-7EBE-4372-A140-D16011DE3723}|Market.Services\\Market.Services.csproj|solutionrelative:market.services\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{20348394-16DD-4EF4-9E4F-A347020A3858}|Market.CartsController\\Market.CartsController.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.cartscontroller\\market.cartscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{20348394-16DD-4EF4-9E4F-A347020A3858}|Market.CartsController\\Market.CartsController.csproj|solutionrelative:market.cartscontroller\\market.cartscontroller.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\datamodels\\efmodels\\cartitemrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\datamodels\\efmodels\\cartitemrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{20348394-16DD-4EF4-9E4F-A347020A3858}|Market.CartsController\\Market.CartsController.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market.cartscontroller\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{20348394-16DD-4EF4-9E4F-A347020A3858}|Market.CartsController\\Market.CartsController.csproj|solutionrelative:market.cartscontroller\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|c:\\users\\javie\\source\\repos\\marketproduct_api\\market\\datamodels\\efmodels\\removecartitemrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{103EA97E-A945-4C72-9E98-C4FBFDBAE985}|Market\\Market.csproj|solutionrelative:market\\datamodels\\efmodels\\removecartitemrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -37,6 +45,32 @@
           "SelectedChildIndex": 7,
           "Children": [
             {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CustomersController.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CustomersController\\CustomersController.cs",
+              "RelativeDocumentMoniker": "Market.CustomersController\\CustomersController.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CustomersController\\CustomersController.cs",
+              "RelativeToolTip": "Market.CustomersController\\CustomersController.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T16:01:45.59Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Startup.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.Services\\Startup.cs",
+              "RelativeDocumentMoniker": "Market.Services\\Startup.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.Services\\Startup.cs",
+              "RelativeToolTip": "Market.Services\\Startup.cs",
+              "ViewState": "AgIAAG4AAAAAAAAAAAAwwJMAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T16:00:22.216Z",
+              "EditorCaption": ""
+            },
+            {
               "$type": "Bookmark",
               "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
             },
@@ -46,80 +80,80 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Market.Services.csproj",
-              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.Services\\Market.Services.csproj",
-              "RelativeDocumentMoniker": "Market.Services\\Market.Services.csproj",
-              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.Services\\Market.Services.csproj",
-              "RelativeToolTip": "Market.Services\\Market.Services.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-10-26T20:56:20.337Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Market.ProductsController.csproj",
-              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.ProductsController\\Market.ProductsController.csproj",
-              "RelativeDocumentMoniker": "Market.ProductsController\\Market.ProductsController.csproj",
-              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.ProductsController\\Market.ProductsController.csproj",
-              "RelativeToolTip": "Market.ProductsController\\Market.ProductsController.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-10-26T20:56:00.006Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Market.OrdersController.csproj",
-              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.OrdersController\\Market.OrdersController.csproj",
-              "RelativeDocumentMoniker": "Market.OrdersController\\Market.OrdersController.csproj",
-              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.OrdersController\\Market.OrdersController.csproj",
-              "RelativeToolTip": "Market.OrdersController\\Market.OrdersController.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-10-26T20:55:50.041Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Market.CustomersController.csproj",
-              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CustomersController\\Market.CustomersController.csproj",
-              "RelativeDocumentMoniker": "Market.CustomersController\\Market.CustomersController.csproj",
-              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CustomersController\\Market.CustomersController.csproj",
-              "RelativeToolTip": "Market.CustomersController\\Market.CustomersController.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-10-26T20:55:46.285Z",
+              "DocumentIndex": 7,
+              "Title": "RemoveCartItemRequest.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DataModels\\EFModels\\RemoveCartItemRequest.cs",
+              "RelativeDocumentMoniker": "Market\\DataModels\\EFModels\\RemoveCartItemRequest.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DataModels\\EFModels\\RemoveCartItemRequest.cs",
+              "RelativeToolTip": "Market\\DataModels\\EFModels\\RemoveCartItemRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T15:51:44.563Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "Market.CartsController.csproj",
-              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CartsController\\Market.CartsController.csproj",
-              "RelativeDocumentMoniker": "Market.CartsController\\Market.CartsController.csproj",
-              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CartsController\\Market.CartsController.csproj",
-              "RelativeToolTip": "Market.CartsController\\Market.CartsController.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-10-26T20:55:35.247Z",
+              "Title": "CartItemRequest.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DataModels\\EFModels\\CartItemRequest.cs",
+              "RelativeDocumentMoniker": "Market\\DataModels\\EFModels\\CartItemRequest.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DataModels\\EFModels\\CartItemRequest.cs",
+              "RelativeToolTip": "Market\\DataModels\\EFModels\\CartItemRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T15:46:41.311Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CartsController.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CartsController\\CartsController.cs",
+              "RelativeDocumentMoniker": "Market.CartsController\\CartsController.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.CartsController\\CartsController.cs",
+              "RelativeToolTip": "Market.CartsController\\CartsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T15:45:57.028Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Market.AuthorizationController.csproj",
-              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.AuthorizationController\\Market.AuthorizationController.csproj",
-              "RelativeDocumentMoniker": "Market.AuthorizationController\\Market.AuthorizationController.csproj",
-              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market.AuthorizationController\\Market.AuthorizationController.csproj",
-              "RelativeToolTip": "Market.AuthorizationController\\Market.AuthorizationController.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABDAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2024-10-26T20:55:28.069Z",
+              "Title": "ICartService.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\IDAL\\ICartService.cs",
+              "RelativeDocumentMoniker": "Market\\DAL\\IDAL\\ICartService.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\IDAL\\ICartService.cs",
+              "RelativeToolTip": "Market\\DAL\\IDAL\\ICartService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T15:44:00.982Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CartService.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\CartService.cs",
+              "RelativeDocumentMoniker": "Market\\DAL\\CartService.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\CartService.cs",
+              "RelativeToolTip": "Market\\DAL\\CartService.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAswCAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T15:37:24.429Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CustomerService.cs",
+              "DocumentMoniker": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\CustomerService.cs",
+              "RelativeDocumentMoniker": "Market\\DAL\\CustomerService.cs",
+              "ToolTip": "C:\\Users\\javie\\source\\repos\\MARKETPRODUCT_API\\Market\\DAL\\CustomerService.cs",
+              "RelativeToolTip": "Market\\DAL\\CustomerService.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T15:37:14.041Z",
               "EditorCaption": ""
             }
           ]

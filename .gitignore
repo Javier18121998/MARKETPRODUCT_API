@@ -57,3 +57,5 @@ marketproduct_api.projects.v9.bin
 # Archivos generados por MSBuild
 *.AssemblyInfoInputs.cache
 *.AssemblyInfo.cs
+
+.fake

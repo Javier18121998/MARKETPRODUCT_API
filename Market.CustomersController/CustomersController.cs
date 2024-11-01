@@ -1,6 +1,7 @@
 ﻿using Market.DAL.IDAL;
 using Market.DataModels.EFModels;
 using Market.Utilities.BaseControllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -18,16 +19,15 @@ namespace Market.CustomersController
             _customerService = customerService;
         }
 
-        [HttpGet]
-        [SwaggerOperation(
-            Summary = "Obtiene los detalles de un Cliente",
-            Description = "Obtine los deatalles de un cliente, mediante Su Email y Contraseña.")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> GetCustomerDataAsync()
+
+        [Authorize]
+        [HttpGet("validate-token")]
+        public async Task<ActionResult> ValidateTokenAsync()
         {
-            return Ok();
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var isValid = await _customerService.IsTokenValidAsync(token);
+
+            return isValid ? Ok(new { message = "Token is valid." }) : Unauthorized(new { message = "Token is invalid or expired." });
         }
 
         [HttpPost("Register")]
@@ -40,7 +40,13 @@ namespace Market.CustomersController
         public async Task<ActionResult> CustomerRegistratioAsync([FromBody] CustomerRegistration registration)
         {
             var customer = await _customerService.RegisterCustomerAsync(registration);
-            return Ok(customer);
+            var token = await _customerService.AuthenticateCustomerAsync(new CustomerLogin
+            {
+                Email = registration.Email,
+                Password = registration.Password
+            });
+
+            return Ok(new { customer, token });
         }
 
         [HttpPost("login")]
@@ -58,6 +64,18 @@ namespace Market.CustomersController
                 return Unauthorized(new { message = "Invalid email or password." });
             }
             return Ok(new { token });
+        }
+
+        [HttpGet]
+        [SwaggerOperation(
+            Summary = "Obtiene los detalles de un Cliente",
+            Description = "Obtine los deatalles de un cliente, mediante Su Email y Contraseña.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
+        public async Task<ActionResult> GetCustomerDataAsync()
+        {
+            return Ok();
         }
 
         [HttpPut]

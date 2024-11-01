@@ -72,7 +72,7 @@ namespace Market.DAL
                 await _context.SaveChangesAsync();
                 return productCreated;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

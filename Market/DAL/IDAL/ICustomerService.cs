@@ -12,5 +12,6 @@ namespace Market.DAL.IDAL
     {
         Task<Customer> RegisterCustomerAsync(CustomerRegistration registration);
         Task<string> AuthenticateCustomerAsync(CustomerLogin login);
+        Task<bool> IsTokenValidAsync(string token);
     }
 }

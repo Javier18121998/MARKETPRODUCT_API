@@ -1,46 +1,52 @@
 ﻿using Market.DAL.IDAL;
 using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
+using Market.Market.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Market.DAL
 {
     public class CustomerService : ICustomerService
     {
-        private readonly List<Customer> _customers = new List<Customer>(); // This should be a database context in production
+        private readonly MarketDbContext _context;
         private readonly JwtSettings _jwtSettings;
 
-        public CustomerService(IOptions<JwtSettings> jwtSettings)
+        public CustomerService(IOptions<JwtSettings> jwtSettings, MarketDbContext context)
         {
             _jwtSettings = jwtSettings.Value;
+            _context = context;
         }
 
         public async Task<Customer> RegisterCustomerAsync(CustomerRegistration registration)
         {
             var customer = new Customer
             {
-                Id = _customers.Count + 1, // Simulando un ID
                 Email = registration.Email,
                 Password = HashPassword(registration.Password),
                 FullName = registration.FullName
             };
 
-            _customers.Add(customer); // Store in DB in production
-            return await Task.FromResult(customer);
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            return customer;
         }
 
         public async Task<string> AuthenticateCustomerAsync(CustomerLogin login)
         {
-            var customer = _customers.FirstOrDefault(c => c.Email == login.Email && c.Password == HashPassword(login.Password));
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == login.Email && c.Password == HashPassword(login.Password));
 
             if (customer == null)
             {
-                return null; // Invalid credentials
+                return null;
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -49,20 +55,41 @@ namespace Market.DAL
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, customer.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, customer.Email),
+                new Claim("CustomerId", customer.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return await Task.FromResult(tokenHandler.WriteToken(token));
+            var tokenString = tokenHandler.WriteToken(token);
+
+            var session = new CustomerSession
+            {
+                CustomerId = customer.Id,
+                Token = tokenString,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes)
+            };
+
+            _context.CustomerSessions.Add(session);
+            await _context.SaveChangesAsync();
+
+            return tokenString;
+        }
+
+        public async Task<bool> IsTokenValidAsync(string token)
+        {
+            var session = await _context.CustomerSessions
+                .FirstOrDefaultAsync(cs => cs.Token == token && cs.ExpiresAt > DateTime.UtcNow && !cs.IsRevoked);
+
+            return session != null;
         }
 
         private string HashPassword(string password)
         {
-            return password; // For demo purposes only
+            return password;
         }
     }
 }
