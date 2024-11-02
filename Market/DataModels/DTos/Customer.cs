@@ -12,7 +12,8 @@ namespace Market.DataModels.DTos
         public string Email { get; set; }
 
         // Hashed Password
-        public string Password { get; set; } 
+        public string PasswordHash { get; set; }
         public string FullName { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

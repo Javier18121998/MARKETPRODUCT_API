@@ -27,22 +27,29 @@ namespace Market.DAL
 
         public async Task<Customer> RegisterCustomerAsync(CustomerRegistration registration)
         {
-            var customer = new Customer
+            try
             {
-                Email = registration.Email,
-                Password = HashPassword(registration.Password),
-                FullName = registration.FullName
-            };
-
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
-
-            return customer;
+                var dateTime = DateTime.UtcNow;
+                var customer = new Customer
+                {
+                    Email = registration.Email,
+                    PasswordHash = registration.Password,
+                    FullName = registration.FullName,
+                    CreatedAt = dateTime
+                };
+                _context.Customers.Add(customer);
+                await _context.SaveChangesAsync();
+                return customer;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<string> AuthenticateCustomerAsync(CustomerLogin login)
         {
-            var customer = _context.Customers.FirstOrDefault(c => c.Email == login.Email && c.Password == HashPassword(login.Password));
+            var customer = _context.Customers.FirstOrDefault(c => c.Email == login.Email && c.PasswordHash == HashPassword(login.Password));
 
             if (customer == null)
             {
