@@ -23,13 +23,21 @@ namespace Market.DAL
 
         private int GetCustomerIdFromContext()
         {
-            var customerIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("CustomerId")?.Value;
-            if (int.TryParse(customerIdClaim, out int customerId))
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user == null || !user.Identity.IsAuthenticated)
             {
-                return customerId;
+                throw new UnauthorizedAccessException("No se pudo obtener el CustomerId.");
             }
-            throw new UnauthorizedAccessException("CustomerId no encontrado en el token.");
+
+            var customerIdClaim = user.FindFirst("user_id");
+            if (customerIdClaim == null)
+            {
+                throw new UnauthorizedAccessException("El CustomerId no se encuentra en los claims.");
+            }
+
+            return int.Parse(customerIdClaim.Value);
         }
+
 
         public async Task<Cart> AddItemToCartAsync(string productName, int quantity, string size)
         {

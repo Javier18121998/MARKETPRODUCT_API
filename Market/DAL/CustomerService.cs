@@ -63,7 +63,7 @@ namespace Market.DAL
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                 new Claim(JwtRegisteredClaimNames.Sub, customer.Email),
-                new Claim("CustomerId", customer.Id.ToString())
+                new Claim("user_id", customer.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
