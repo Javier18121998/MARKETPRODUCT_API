@@ -41,72 +41,94 @@ namespace Market.DAL
 
         public async Task<Cart> AddItemToCartAsync(string productName, int quantity, string size)
         {
-            var customerId = GetCustomerIdFromContext();
-
-            // Buscar el producto por nombre
-            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductName == productName);
-            if (product == null) throw new ArgumentException("Producto no encontrado.");
-
-            // Verificar existencia en Orders para actualizar inventario
-            var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.ProductId == product.Id);
-            if (order == null || order.Quantity < quantity)
+            try
             {
-                throw new InvalidOperationException("Cantidad insuficiente en inventario.");
-            }
+                var customerId = GetCustomerIdFromContext();
 
-            // Obtener o crear el carrito del cliente
-            var cart = await _dbContext.Carts
-                .Include(c => c.Items)
-                .FirstOrDefaultAsync(c => c.CustomerId == customerId);
-
-            if (cart == null)
-            {
-                cart = new Cart
+                // Buscar el producto por nombre
+                var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductName == productName);
+                if (product == null)
                 {
-                    CustomerId = customerId,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                _dbContext.Carts.Add(cart);
+                    throw new ArgumentException("Producto no encontrado.");
+                }
+
+                // Verificar existencia en Orders para actualizar inventario
+                var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.ProductId == product.Id);
+                if (order == null || order.Quantity < quantity)
+                {
+                    throw new InvalidOperationException("Cantidad insuficiente en inventario.");
+                }
+
+                // Obtener o crear el carrito del cliente
+                var cart = await _dbContext.Cart
+                    .Include(c => c.Items)
+                    .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+
+                if (cart == null)
+                {
+                    cart = new Cart
+                    {
+                        CustomerId = customerId,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    _dbContext.Cart.Add(cart);
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                // Revisar si ya existe el producto en el carrito
+                var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == product.Id && i.Size == size);
+                if (existingItem != null)
+                {
+                    existingItem.Quantity += quantity;
+                    _dbContext.CartItem.Update(existingItem);
+                }
+                else
+                {
+                    var cartItem = new CartItem
+                    {
+                        CartId = cart.Id,
+                        ProductId = product.Id,
+                        Quantity = quantity,
+                        Size = size,
+                    };
+                    cart.Items.Add(cartItem);
+                    _dbContext.CartItem.Add(cartItem);
+                }
+
+                // Actualizar inventario en Orders
+                order.Quantity -= quantity;
+                _dbContext.Orders.Update(order);
+
+                // Actualizar la fecha de modificación del carrito
+                cart.UpdatedAt = DateTime.UtcNow;
                 await _dbContext.SaveChangesAsync();
-            }
 
-            // Revisar si ya existe el producto en el carrito
-            var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == product.Id && i.Size == size);
-            if (existingItem != null)
+                return cart;
+            }
+            catch (ArgumentException ex)
             {
-                existingItem.Quantity += quantity;
-                _dbContext.CartItems.Update(existingItem);
+                Console.WriteLine(ex.Message, "Argumento inválido en AddItemToCartAsync: {Message}", ex.Message);
+                throw;
             }
-            else
+            catch (InvalidOperationException ex)
             {
-                var cartItem = new CartItem
-                {
-                    CartId = cart.Id,
-                    ProductId = product.Id,
-                    Quantity = quantity,
-                    Size = size,
-                };
-                cart.Items.Add(cartItem);
-                _dbContext.CartItems.Add(cartItem);
+                Console.WriteLine(ex.Message, "Operación inválida en AddItemToCartAsync: {Message}", ex.Message);
+                throw;
             }
-
-            // Actualizar inventario en Orders
-            order.Quantity -= quantity;
-            _dbContext.Orders.Update(order);
-
-            // Actualizar la fecha de modificación del carrito
-            cart.UpdatedAt = DateTime.UtcNow;
-            await _dbContext.SaveChangesAsync();
-
-            return cart;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message, "Error inesperado en AddItemToCartAsync: {Message}", ex.Message);
+                throw new Exception("Error al añadir el producto al carrito, intente de nuevo.");
+            }
         }
+
 
         public async Task<Cart> GetCustomerCartAsync()
         {
             var customerId = GetCustomerIdFromContext();
 
-            return await _dbContext.Carts
+            return await _dbContext.Cart
                 .Include(c => c.Items)
                 .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(c => c.CustomerId == customerId);
@@ -117,7 +139,7 @@ namespace Market.DAL
             var customerId = GetCustomerIdFromContext(); // Usar el método que ya tienes para obtener el ID del cliente
 
             // Obtener el carrito del cliente autenticado
-            var cart = await _dbContext.Carts
+            var cart = await _dbContext.Cart
                 .Include(c => c.Items)
                 .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(c => c.CustomerId == customerId);
@@ -143,7 +165,7 @@ namespace Market.DAL
             }
 
             // Eliminar el CartItem del carrito y guardar cambios
-            _dbContext.CartItems.Remove(cartItem);
+            _dbContext.CartItem.Remove(cartItem);
             await _dbContext.SaveChangesAsync();
             return true;
         }
