@@ -11,8 +11,8 @@ namespace Market.Market.Models
         public DbSet<OrderDto> Orders { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerSession> CustomerSessions { get; set; }
-        public DbSet<Cart> Carts { get; set; }           
-        public DbSet<CartItem> CartItems { get; set; } 
+        public DbSet<Cart> Cart { get; set; }
+        public DbSet<CartItem> CartItem { get; set; }
 
         public MarketDbContext(DbContextOptions<MarketDbContext> options) : base(options)
         {
@@ -54,7 +54,7 @@ namespace Market.Market.Models
                 .HasOne(ci => ci.Product)
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

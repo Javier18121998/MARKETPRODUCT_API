@@ -45,6 +45,7 @@ namespace MARKETPRODUCT_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddHttpContextAccessor();
 
             services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
             #region JWTConfiguration Auth
@@ -145,7 +146,6 @@ namespace MARKETPRODUCT_API
                 options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
             );
 
-            services.AddHttpContextAccessor();
 
             //Adding JWTBEarer services
             #region JWTConfiguration Auth

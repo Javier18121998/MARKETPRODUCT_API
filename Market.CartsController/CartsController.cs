@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Market.CartsController
 {
@@ -22,6 +23,7 @@ namespace Market.CartsController
             _cartService = cartService;
         }
 
+        [Authorize]
         [HttpPost("AddItem")]
         [SwaggerOperation(
             Summary = "Añade un producto al carrito del cliente",
