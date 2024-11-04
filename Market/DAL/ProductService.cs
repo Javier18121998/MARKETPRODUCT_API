@@ -42,16 +42,12 @@ namespace Market.DAL
         {
             try
             {
-                string normalizedSize;
-
                 if (IsLiquid(product.Size))
                 {
-                    normalizedSize = NormalizeLiquidProductSize(product.Size);
                     await IsLiquidProductDuplicateAsync(product);
                 }
                 else if (IsSolid(product.Size))
                 {
-                    normalizedSize = NormalizeSolidProductSize(product.Size);
                     await IsSolidProductDuplicateAsync(product);
                 }
                 else
@@ -65,7 +61,7 @@ namespace Market.DAL
                     ProductName = product.Name,
                     ProductDescription = product.Description,
                     ProductPrice = product.Price,
-                    ProductSize = normalizedSize,
+                    ProductSize = product.Size,
                 };
 
                 _context.Products.Add(productCreated);
