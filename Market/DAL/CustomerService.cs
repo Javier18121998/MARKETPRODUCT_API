@@ -62,11 +62,13 @@ namespace Market.DAL
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim(JwtRegisteredClaimNames.Sub, customer.Email),
-                new Claim("user_id", customer.Id.ToString())
+                    new Claim(JwtRegisteredClaimNames.Sub, customer.Email),
+                    new Claim("customer_id", customer.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _jwtSettings.Issuer,
+                Audience = _jwtSettings.Audience
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -97,6 +99,20 @@ namespace Market.DAL
         private string HashPassword(string password)
         {
             return password;
+        }
+
+        public async Task<bool> RevokeTokenAsync(string token)
+        {
+            var session = await _context.CustomerSessions.FirstOrDefaultAsync(cs => cs.Token == token);
+
+            if (session == null || session.IsRevoked)
+            {
+                return false;
+            }
+
+            session.IsRevoked = true;
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

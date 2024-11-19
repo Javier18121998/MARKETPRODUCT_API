@@ -113,5 +113,24 @@ namespace Market.CustomersController
         {
             return Ok();
         }
+
+        [Authorize]
+        [HttpPost("logout")]
+        [SwaggerOperation(
+            Summary = "Logout the CustomerSession",
+            Description = "Close the session via jwt Token active revoke session.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "No enccount this session.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "somehting via jwt Token crash the error.")]
+        public async Task<ActionResult> LogoutAsync()
+        {
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var result = await _customerService.RevokeTokenAsync(token);
+            if (!result)
+            {
+                return BadRequest(new { message = "Failed to logout." });
+            }
+            return Ok(new { message = "Successfully logged out." });
+        }
     }
 }
