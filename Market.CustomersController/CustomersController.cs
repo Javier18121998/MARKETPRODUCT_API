@@ -1,4 +1,4 @@
-﻿using Market.DAL.IDAL;
+﻿using Market.BL.IBL;
 using Market.DataModels.EFModels;
 using Market.Utilities.BaseControllers;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +12,11 @@ namespace Market.CustomersController
     [ApiVersion("2.0")]
     public class CustomersController : MarketProductControllerBase<CustomersController>
     {
-        private readonly ICustomerService _customerService;
-        public CustomersController(ILogger<CustomersController> logger, ICustomerService customerService)
+        private readonly ICustomerServiceBL _customerServiceBL;
+        public CustomersController(ILogger<CustomersController> logger, ICustomerServiceBL customerServiceBL)
             : base(logger)
         {
-            _customerService = customerService;
+            _customerServiceBL = customerServiceBL;
         }
 
 
@@ -25,7 +25,7 @@ namespace Market.CustomersController
         public async Task<ActionResult> ValidateTokenAsync()
         {
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var isValid = await _customerService.IsTokenValidAsync(token);
+            var isValid = await _customerServiceBL.IsTokenValidAsync(token);
 
             return isValid ? Ok(new { message = "Token is valid." }) : Unauthorized(new { message = "Token is invalid or expired." });
         }
@@ -39,8 +39,8 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
         public async Task<ActionResult> CustomerRegistratioAsync([FromBody] CustomerRegistration registration)
         {
-            var customer = await _customerService.RegisterCustomerAsync(registration);
-            var token = await _customerService.AuthenticateCustomerAsync(new CustomerLogin
+            var customer = await _customerServiceBL.RegisterCustomerAsync(registration);
+            var token = await _customerServiceBL.AuthenticateCustomerAsync(new CustomerLogin
             {
                 Email = registration.Email,
                 Password = registration.Password
@@ -58,7 +58,7 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
         public async Task<ActionResult> CustomerLoginAccesAsync([FromBody] CustomerLogin login)
         {
-            var token = await _customerService.AuthenticateCustomerAsync(login);
+            var token = await _customerServiceBL.AuthenticateCustomerAsync(login);
             if (token == null)
             {
                 return Unauthorized(new { message = "Invalid email or password." });
@@ -125,7 +125,7 @@ namespace Market.CustomersController
         public async Task<ActionResult> LogoutAsync()
         {
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var result = await _customerService.RevokeTokenAsync(token);
+            var result = await _customerServiceBL.RevokeTokenAsync(token);
             if (!result)
             {
                 return BadRequest(new { message = "Failed to logout." });
