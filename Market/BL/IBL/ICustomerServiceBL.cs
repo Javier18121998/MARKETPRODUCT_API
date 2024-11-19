@@ -1,14 +1,12 @@
-﻿using Market.DataModels.DTos;
-using Market.DataModels.EFModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Market.DataModels.DTos;
+using Market.DataModels.EFModels;
 
-namespace Market.DAL.IDAL
+namespace Market.BL.IBL
 {
-    public interface ICustomerService
+    public interface ICustomerServiceBL
     {
         Task<Customer> RegisterCustomerAsync(CustomerRegistration registration);
         Task<string> AuthenticateCustomerAsync(CustomerLogin login);

@@ -164,6 +164,7 @@ namespace MARKETPRODUCT_API
             services.AddScoped<Market.Utilities.MQServices.IProduceServices.IMQProducer, Market.Utilities.MQServices.ProduceServices.MQProducer>();
             services.AddScoped<Market.DAL.IDAL.ICustomerService, Market.DAL.CustomerService>();
             services.AddScoped<Market.DAL.IDAL.ICartService, Market.DAL.CartService>();
+            services.AddScoped<Market.BL.IBL.ICustomerServiceBL, Market.BL.CustomerServiceBL>();
 
             services.AddScoped<IUserService, UserService>();
             #endregion

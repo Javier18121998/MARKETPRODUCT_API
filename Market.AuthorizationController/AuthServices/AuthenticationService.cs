@@ -50,7 +50,7 @@ namespace Market.AuthorizationController.AuthServices
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("role", user.Role), // User role
-                new Claim("user_id", user.Id.ToString()) // Unique user ID
+                new Claim("auth_id", user.Id.ToString()) // Unique user ID
             };
 
             // Configures the token with security parameters

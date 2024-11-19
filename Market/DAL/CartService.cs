@@ -29,7 +29,7 @@ namespace Market.DAL
                 throw new UnauthorizedAccessException("No se pudo obtener el CustomerId.");
             }
 
-            var customerIdClaim = user.FindFirst("user_id");
+            var customerIdClaim = user.FindFirst("customer_id");
             if (customerIdClaim == null)
             {
                 throw new UnauthorizedAccessException("El CustomerId no se encuentra en los claims.");
