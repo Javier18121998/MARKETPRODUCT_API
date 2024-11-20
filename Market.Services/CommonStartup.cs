@@ -31,18 +31,22 @@ namespace MARKETPRODUCT_API
         /// <param name="services">The service collection to which services are added.</param>
         public void RegisterCommonServices(IServiceCollection services)
         {
-            services.AddScoped<IOrderServiceBL, OrderServiceBL>();
-            services.AddScoped<IProductServiceBL, ProductServiceBL>();
-            services.AddScoped<ICustomerServiceBL, CustomerServiceBL>();
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<ICustomerService, CustomerService>();
-            services.AddScoped<ICartService, CartService>();
-            services.AddScoped<IProductValidationService, ProductValidationService>();
-            services.AddScoped<IOrderValidationService, OrderValidationService>();
-            services.AddScoped<IMQManagerService, MQManagerService>();
-            services.AddScoped<IMQProducer, MQProducer>();
-            services.AddScoped<IUserService, UserService>();
+            var assembly = typeof(Startup).Assembly;
+            var typesWithInterfaces = assembly.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract)
+                .Select(t => new
+                {
+                    Implementation = t,
+                    Interface = t.GetInterfaces().FirstOrDefault(i => i.Name == $"I{t.Name}")
+                })
+            .Where(x => x.Interface != null);
+            foreach (var type in typesWithInterfaces)
+            {
+                if (type.Interface != null && type.Implementation != null)
+                {
+                    services.AddScoped(type.Interface, type.Implementation);
+                }
+            }
         }
 
         /// <summary>
