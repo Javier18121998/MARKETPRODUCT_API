@@ -39,6 +39,10 @@ namespace MARKETPRODUCT_API
         /// <param name="services">The service collection to register services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            string marketProductDBConn = Configuration.GetConnectionString(MarketUtilities.DefaultConnection) ?? string.Empty;
+            NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+            var jwtKey = Configuration["Jwt:Key"];
+
             services.AddControllers();
             services.AddHttpContextAccessor();
 
@@ -48,7 +52,6 @@ namespace MARKETPRODUCT_API
             #endregion
 
             // Configura autenticación con JWT
-            var jwtKey = Configuration["Jwt:Key"];
             if (string.IsNullOrEmpty(jwtKey))
             {
                 throw new ArgumentNullException(nameof(jwtKey), "JWT Key is not configured properly in appsettings.");
@@ -92,9 +95,29 @@ namespace MARKETPRODUCT_API
             // Configuración de Swagger para varias versiones
             CommonSwaggerConfigurations(services);
 
-            services.AddDbContext<MarketDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(MarketUtilities.DefaultConnection))
-            );
+
+            if (!string.IsNullOrEmpty(marketProductDBConn))
+            {
+                services.AddDbContext<MarketDbContext>(options =>
+                    options.UseSqlServer(marketProductDBConn,
+                        sqlServerOptions =>
+                        {
+                            sqlServerOptions.CommandTimeout(Convert.ToInt32(Configuration.GetValue<string>("SqlCommandTimeout") ?? "30"));
+                        })
+                    .LogTo(msg =>
+                    {
+                        string loglevel = Configuration.GetValue<string>("LogLevel") ?? "Error";
+                        if (loglevel.Equals("Trace", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Trace(msg);
+                        }
+                    })
+                );
+            }
+            else
+            {
+                NLog.LogManager.GetCurrentClassLogger().Error("Error, missing configuration 'MarketProductDB'");
+            }
 
             //Adding JWTBEarer services
             #region JWTConfiguration Auth
