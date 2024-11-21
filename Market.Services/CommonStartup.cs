@@ -14,6 +14,9 @@ using Market.AuthorizationController.AuthServices;
 using MARKETPRODUCT_API.MARKETUtilities;
 using Market.Exceptions.Middlewares;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Market.Market.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MARKETPRODUCT_API
 {
@@ -79,6 +82,8 @@ namespace MARKETPRODUCT_API
                 app.UseExceptionHandler("/Home/Error"); // Handles errors in production
                 app.UseHsts(); // Adds additional security for production
             }
+
+            app.UseCors("MyPoliticalCors");
 
             app.UseMiddleware<MarketHandlingMiddleware>(); // Custom middleware for exception handling
 
@@ -147,6 +152,74 @@ namespace MARKETPRODUCT_API
                         new string[] { }
                     }
                 });
+            });
+        }
+
+        /// <summary>
+        /// Configura la versionación de la API, incluyendo la versión predeterminada, la posibilidad de asumir una versión predeterminada si no se especifica, 
+        /// y la inclusión de versiones soportadas en las respuestas.
+        /// </summary>
+        /// <param name="services">El contenedor de servicios donde se registran los servicios de versionado de la API.</param>
+        public void CommonVersioningApplication(IServiceCollection services)
+        {
+            services.AddApiVersioning(options =>
+                {
+                    options.DefaultApiVersion = new ApiVersion(1, 0);
+                    options.AssumeDefaultVersionWhenUnspecified = true;
+                    options.ReportApiVersions = true;
+                }
+            );
+
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
+        }
+
+        /// <summary>
+        /// Configura la base de datos utilizando Entity Framework y SQL Server. 
+        /// Este método obtiene la cadena de conexión desde la configuración y configura el tiempo de espera de comandos y logging.
+        /// </summary>
+        /// <param name="services">El contenedor de servicios donde se registra el contexto de la base de datos.</param>
+        /// <param name="configuration">La configuración de la aplicación que contiene la cadena de conexión y otros parámetros relevantes.</param>
+        public void ConfigureDatabase(IServiceCollection services, IConfiguration configuration)
+        {
+            string marketProductDBConn = configuration.GetConnectionString(MarketUtilities.DefaultConnection) ?? string.Empty;
+            NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+            if (!string.IsNullOrEmpty(marketProductDBConn))
+            {
+                services.AddDbContext<MarketDbContext>(options =>
+                    options.UseSqlServer(marketProductDBConn,
+                        sqlServerOptions =>
+                        {
+                            sqlServerOptions.CommandTimeout(Convert.ToInt32(configuration.GetValue<string>("SqlCommandTimeout") ?? "30"));
+                        })
+                    .LogTo(msg =>
+                    {
+                        string loglevel = configuration.GetValue<string>("LogLevel") ?? "Error";
+                        if (loglevel.Equals("Trace", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NLog.LogManager.GetCurrentClassLogger().Trace(msg);
+                        }
+                    })
+                );
+            }
+            else
+                logger.Error("Error, missing configuration 'MarketProductDB'");
+        }
+
+        public void CommonCorsConfigurations(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("MiPoliticaCors", policy =>
+                    {
+                        policy.WithOrigins("https://dominio1.com", "https://dominio2.com")
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    }
+                );
             });
         }
     }
