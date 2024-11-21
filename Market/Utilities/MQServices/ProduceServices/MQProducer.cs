@@ -185,7 +185,7 @@ namespace Market.Utilities.MQServices.ProduceServices
                     return Math.Abs(seed);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception();
             }
