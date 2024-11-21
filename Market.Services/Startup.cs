@@ -39,10 +39,9 @@ namespace MARKETPRODUCT_API
         /// <param name="services">The service collection to register services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            string marketProductDBConn = Configuration.GetConnectionString(MarketUtilities.DefaultConnection) ?? string.Empty;
-            NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
             var jwtKey = Configuration["Jwt:Key"];
 
+            CommonCorsConfigurations(services);
             services.AddControllers();
             services.AddHttpContextAccessor();
 
@@ -79,45 +78,10 @@ namespace MARKETPRODUCT_API
             services.AddAuthorization();
 
             // Configuración de versionamiento de API
-            services.AddApiVersioning(options =>
-            {
-                options.DefaultApiVersion = new ApiVersion(1, 0); // v1.0 como versión predeterminada
-                options.AssumeDefaultVersionWhenUnspecified = true; // Usa la versión predeterminada si no se especifica
-                options.ReportApiVersions = true; // Devuelve las versiones soportadas en la respuesta
-            });
-
-            services.AddVersionedApiExplorer(options =>
-            {
-                options.GroupNameFormat = "'v'VVV"; // Formato de la versión
-                options.SubstituteApiVersionInUrl = true; // Habilita la versión en la URL
-            });
-
+            CommonVersioningApplication(services);
             // Configuración de Swagger para varias versiones
             CommonSwaggerConfigurations(services);
-
-
-            if (!string.IsNullOrEmpty(marketProductDBConn))
-            {
-                services.AddDbContext<MarketDbContext>(options =>
-                    options.UseSqlServer(marketProductDBConn,
-                        sqlServerOptions =>
-                        {
-                            sqlServerOptions.CommandTimeout(Convert.ToInt32(Configuration.GetValue<string>("SqlCommandTimeout") ?? "30"));
-                        })
-                    .LogTo(msg =>
-                    {
-                        string loglevel = Configuration.GetValue<string>("LogLevel") ?? "Error";
-                        if (loglevel.Equals("Trace", StringComparison.OrdinalIgnoreCase))
-                        {
-                            NLog.LogManager.GetCurrentClassLogger().Trace(msg);
-                        }
-                    })
-                );
-            }
-            else
-            {
-                NLog.LogManager.GetCurrentClassLogger().Error("Error, missing configuration 'MarketProductDB'");
-            }
+            ConfigureDatabase(services, Configuration);
 
             //Adding JWTBEarer services
             #region JWTConfiguration Auth
@@ -128,7 +92,6 @@ namespace MARKETPRODUCT_API
             #region Registry of services application
             RegisterCommonServices(services);
             #endregion
-
         }
 
 
@@ -142,15 +105,10 @@ namespace MARKETPRODUCT_API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             CommonConfigure(app, env);
-
-            // CORS: habilitar solo si es necesario
-            // app.UseCors("MiPoliticaCors");
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
-
     }
 }
