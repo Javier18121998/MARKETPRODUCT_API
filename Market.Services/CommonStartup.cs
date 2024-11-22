@@ -146,10 +146,10 @@ namespace MARKETPRODUCT_API
         }
 
         /// <summary>
-        /// Configura la versionación de la API, incluyendo la versión predeterminada, la posibilidad de asumir una versión predeterminada si no se especifica, 
-        /// y la inclusión de versiones soportadas en las respuestas.
+        /// Configures API versioning, including the default version, the ability to assume a default version 
+        /// if one is not specified, and the inclusion of supported versions in responses.
         /// </summary>
-        /// <param name="services">El contenedor de servicios donde se registran los servicios de versionado de la API.</param>
+        /// <param name="services">The service container where API versioning services are registered.</param>
         public void CommonVersioningApplication(IServiceCollection services)
         {
             services.AddApiVersioning(options =>
@@ -168,11 +168,11 @@ namespace MARKETPRODUCT_API
         }
 
         /// <summary>
-        /// Configura la base de datos utilizando Entity Framework y SQL Server. 
-        /// Este método obtiene la cadena de conexión desde la configuración y configura el tiempo de espera de comandos y logging.
+        /// Configures the database using Entity Framework and SQL Server. 
+        /// This method retrieves the connection string from the configuration and sets up command timeout and logging.
         /// </summary>
-        /// <param name="services">El contenedor de servicios donde se registra el contexto de la base de datos.</param>
-        /// <param name="configuration">La configuración de la aplicación que contiene la cadena de conexión y otros parámetros relevantes.</param>
+        /// <param name="services">The service container where the database context is registered.</param>
+        /// <param name="configuration">The application configuration containing the connection string and other relevant parameters.</param>
         public void ConfigureDatabase(IServiceCollection services, IConfiguration configuration)
         {
             string marketProductDBConn = configuration.GetConnectionString(MarketUtilities.DefaultConnection) ?? string.Empty;
@@ -197,20 +197,6 @@ namespace MARKETPRODUCT_API
             }
             else
                 logger.Error("Error, missing configuration 'MarketProductDB'");
-        }
-
-        public void CommonCorsConfigurations(IServiceCollection services)
-        {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("MiPoliticaCors", policy =>
-                    {
-                        policy.WithOrigins(MarketUtilities.DomainPhaser, MarketUtilities.DomainStable)
-                              .AllowAnyHeader()
-                              .AllowAnyMethod();
-                    }
-                );
-            });
         }
     }
 }
