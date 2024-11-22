@@ -49,16 +49,6 @@ namespace MARKETPRODUCT_API
         }
 
         /// <summary>
-        /// Registers JWT Bearer authentication services.
-        /// Configures dependency injection for authentication-related services.
-        /// </summary>
-        /// <param name="services">The service collection to which JWT services are added.</param>
-        public void JwtBearerServices(IServiceCollection services)
-        {
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-        }
-
-        /// <summary>
         /// Configures common middleware components for the application pipeline.
         /// This includes handling errors, enabling Swagger in development, and 
         /// configuring HTTPS redirection, authentication, and routing.

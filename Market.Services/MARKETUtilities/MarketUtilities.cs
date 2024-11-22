@@ -31,7 +31,7 @@
         public const string SwaggerDocDescriptionV2 = "Advanced Phase 2.0";
 
         // Cors variables
-        public const string DomainPhaser = "https://dominio1.com";
-        public const string DomainStable = "https://dominio2.com";
+        public const string DomainPhaser = "https://yourdomain1.com";
+        public const string DomainStable = "https://yourdomain2.com";
     }
 }
