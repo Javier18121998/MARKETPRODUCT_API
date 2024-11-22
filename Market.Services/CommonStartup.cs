@@ -215,7 +215,7 @@ namespace MARKETPRODUCT_API
             {
                 options.AddPolicy("MiPoliticaCors", policy =>
                     {
-                        policy.WithOrigins(MarketUtilities.DomainPhaser, MarketUtilities.DomainStable)
+                        policy.WithOrigins("https://dominio1.com", "https://dominio2.com")
                               .AllowAnyHeader()
                               .AllowAnyMethod();
                     }
