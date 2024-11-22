@@ -30,6 +30,8 @@
         public const string SwaggerDocDescription = "API to understand the microservices communication with Message Brokers-RabbitMQ";
         public const string SwaggerDocDescriptionV2 = "Advanced Phase 2.0";
 
-
+        // Cors variables
+        public const string DomainPhaser = "https://dominio1.com";
+        public const string DomainStable = "https://dominio2.com";
     }
 }
