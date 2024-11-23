@@ -1,5 +1,6 @@
 using System.Text;
 using Market.AuthorizationController.AuthServices;
+using MARKETPRODUCT_API.MARKETUtilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -48,6 +49,28 @@ namespace MARKETPRODUCT_API
         public static void JwtBearerServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+        }
+
+        /// <summary>
+        /// Configures Cross-Origin Resource Sharing (CORS) policies for the application,
+        /// allowing requests from specific domains with support for any HTTP headers
+        /// and methods.
+        /// </summary>
+        /// <param name="services">
+        /// The service collection where the CORS configuration is registered.
+        /// </param>
+        public static void CommonCorsConfigurations(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("MyPoliticalCors", policy =>
+                    {
+                        policy.WithOrigins(MarketUtilities.DomainPhaser, MarketUtilities.DomainStable)
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    }
+                );
+            });
         }
     }
 }
