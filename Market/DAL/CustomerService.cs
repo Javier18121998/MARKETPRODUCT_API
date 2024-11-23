@@ -115,6 +115,7 @@ namespace Market.DAL
             return true;
         }
 
+        #region Password Encryption
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];
@@ -158,5 +159,6 @@ namespace Market.DAL
 
             return true;
         }
+        #endregion
     }
 }
