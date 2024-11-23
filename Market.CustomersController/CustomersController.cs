@@ -1,5 +1,6 @@
 ﻿using Market.BL.IBL;
 using Market.DataModels.EFModels;
+using Market.Exceptions;
 using Market.Utilities.BaseControllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -131,6 +132,32 @@ namespace Market.CustomersController
                 return BadRequest(new { message = "Failed to logout." });
             }
             return Ok(new { message = "Successfully logged out." });
+        }
+
+        [Authorize]
+        [HttpPost("RegisterCustomerData")]
+        [SwaggerOperation(
+            Summary = "Add the Customer Data",
+            Description = "Add the Customer Data via Customer Id from their Token.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "No enccount this session.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "somehting via jwt Token crash the error.")]
+        public async Task<ActionResult> PostingDataCustomer([FromBody] CustomerDataRegistration customerDataRegistration)
+        {
+            try
+            {
+                var customerId = Convert.ToInt32(User?.FindFirst("customer_id")?.Value);
+                var customerData = await _customerServiceBL.CustomerDataRegistration(customerId, customerDataRegistration);
+                return Ok(new { message = "Address registered successfully", customerData });
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex.InnerException);
+            }
         }
     }
 }

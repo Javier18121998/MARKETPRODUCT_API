@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Market.BL.IBL;
 using Market.DAL.IDAL;
@@ -81,6 +82,23 @@ namespace Market.BL
             catch (CustomException cex)
             {
                 throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex.InnerException);
+            }
+        }
+
+        public async Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration)
+        {
+            try
+            {
+                var customerData = await _customerService.CustomerDataRegistration(customerId, customerDataRegistration);
+                return customerData;
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(HttpStatusCode.BadRequest, cex.Message, cex.ErrorCode);
             }
             catch (Exception ex)
             {

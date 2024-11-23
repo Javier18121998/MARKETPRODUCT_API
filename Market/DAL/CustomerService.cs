@@ -115,6 +115,33 @@ namespace Market.DAL
             return true;
         }
 
+        public async Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration)
+        {
+            try
+            {
+                var customerData = new CustomerDataRegistrationDto
+                {
+                    Id = customerId,
+                    StreetAddress = customerDataRegistration.StreetAddress,
+                    Neighborhood = customerDataRegistration.Neighborhood,
+                    PostalCode = customerDataRegistration.PostalCode,
+                    Country = customerDataRegistration.Country,
+                    State = customerDataRegistration.State,
+                    City = customerDataRegistration.City,
+                    PhoneNumber = customerDataRegistration.PhoneNumber,
+                    CURP = customerDataRegistration.UniquePopulationRegistryCode,
+                    TaxId = customerDataRegistration.TaxId
+                };
+                _context.customerData.Add(customerData);
+                await _context.SaveChangesAsync();
+                return customerData;
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(HttpStatusCode.BadRequest, cex.Message, "MKPT00001");
+            }
+        }
+
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];

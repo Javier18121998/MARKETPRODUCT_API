@@ -13,6 +13,7 @@ namespace Market.Market.Models
         public DbSet<CustomerSession> CustomerSessions { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartItem> CartItem { get; set; }
+        public DbSet<CustomerDataRegistrationDto> customerData { get; set; }
 
         public MarketDbContext(DbContextOptions<MarketDbContext> options) : base(options)
         {
