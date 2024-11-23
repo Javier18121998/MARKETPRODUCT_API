@@ -26,7 +26,10 @@ namespace Market.DAL
         private readonly IProductValidationService _productValidationService;
         private readonly ILogger<ProductService> _logger;
 
-        public ProductService(MarketDbContext context, IProductValidationService productValidationService, ILogger<ProductService> logger)
+        public ProductService(
+            MarketDbContext context,
+            IProductValidationService productValidationService,
+            ILogger<ProductService> logger)
         {
             _context = context;
             _productValidationService = productValidationService;
