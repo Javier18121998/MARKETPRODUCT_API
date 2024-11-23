@@ -1,11 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Market.Market.Models;
-using MARKETPRODUCT_API.MARKETUtilities;
-using Microsoft.AspNetCore.Mvc;
-using Market.DataModels.DTos;
+﻿using Market.DataModels.DTos;
 using Market.AuthorizationController.AuthConfigurations;
 
 namespace MARKETPRODUCT_API
@@ -39,56 +32,28 @@ namespace MARKETPRODUCT_API
         /// <param name="services">The service collection to register services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtKey = Configuration["Jwt:Key"];
-
-            CommonCorsConfigurations(services);
+            services.CommonCorsConfigurations();
             services.AddControllers();
             services.AddHttpContextAccessor();
-
             #region JWTConfiguration Auth
             services.Configure<JwtSettings>(Configuration.GetSection("Jwt"));
             services.ConfigureJwtSettings(Configuration);
             #endregion
-
-            // Configura autenticación con JWT
-            if (string.IsNullOrEmpty(jwtKey))
-            {
-                throw new ArgumentNullException(nameof(jwtKey), "JWT Key is not configured properly in appsettings.");
-            }
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-                };
-            });
-
+            // Configura autentication with JWT
+            services.AddJwtAuthentication(Configuration);
+            // Configure Authorization 
             services.AddAuthorization();
-
-            // Configuración de versionamiento de API
+            // Configure API Versioning
             CommonVersioningApplication(services);
-            // Configuración de Swagger para varias versiones
+            // Swagger Configuration for many versions
             CommonSwaggerConfigurations(services);
+            // Database Configuration
             ConfigureDatabase(services, Configuration);
-
             //Adding JWTBEarer services
             #region JWTConfiguration Auth
-            JwtBearerServices(services);
+            services.JwtBearerServices();
             #endregion
-
-            // Registro de servicios de aplicación
+            // Application Services Registration
             #region Registry of services application
             RegisterCommonServices(services);
             #endregion
