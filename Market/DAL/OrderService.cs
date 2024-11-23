@@ -2,10 +2,12 @@
 using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
 using Market.DataValidation.IDataBaseValidations;
+using Market.Exceptions;
 using Market.Market.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Market.DAL
@@ -40,7 +42,7 @@ namespace Market.DAL
 
             if (product == null)
             {
-                throw new Exception("The product with the specified name and size does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The product with the specified name and size does not exist.");
             }
 
             var order = new OrderDto
@@ -67,7 +69,7 @@ namespace Market.DAL
             var product = await _context.Products.FindAsync(productId);
             if (product == null)
             {
-                throw new Exception("The product with the specified ID does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The product with the specified ID does not exist.");
             }
 
             var order = new OrderDto
@@ -103,7 +105,7 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("The order with the specified ID does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The order with the specified ID does not exist.");
             }
         }
 
@@ -127,7 +129,7 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("The order with the specified product ID does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The order with the specified product ID does not exist.");
             }
         }
 
@@ -155,7 +157,7 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("The order with the specified product name and size does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The order with the specified product name and size does not exist.");
             }
         }
 
@@ -174,7 +176,7 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("The order with the specified ID does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The order with the specified ID does not exist.");
             }
         }
 
@@ -193,7 +195,7 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("The order with the specified product ID does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The order with the specified product ID does not exist.");
             }
         }
 
@@ -216,7 +218,7 @@ namespace Market.DAL
             }
             else
             {
-                throw new Exception("The order with the specified product name and size does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The order with the specified product name and size does not exist.");
             }
         }
 
@@ -236,8 +238,11 @@ namespace Market.DAL
         /// <returns>The corresponding order.</returns>
         public async Task<OrderDto> GetOrderByIdAsync(int id)
         {
-            return await _context.Orders.Include(o => o.Product)
-                                        .FirstOrDefaultAsync(o => o.Id == id);
+            var order = await _context.Orders.Include(o => o.Product)
+                                            .FirstOrDefaultAsync(o => o.Id == id);
+            if (order == null)
+                throw new CustomException(HttpStatusCode.BadRequest, "Order empty");
+            return order;
         }
 
         /// <summary>
@@ -246,12 +251,23 @@ namespace Market.DAL
         /// <param name="productName">The name of the product.</param>
         /// <param name="productSize">The size of the product.</param>
         /// <returns>The corresponding order.</returns>
+        // public async Task<OrderDto> GetOrderByProductNameAndSizeAsync(string productName, string productSize)
+        // {
+        //     return await _context.Orders.Include(o => o.Product).FirstOrDefaultAsync(o =>
+        //         o.Product.ProductName == productName &&
+        //         o.Product.ProductSize == productSize
+        //     );
+        // }
         public async Task<OrderDto> GetOrderByProductNameAndSizeAsync(string productName, string productSize)
         {
-            return await _context.Orders.Include(o => o.Product).FirstOrDefaultAsync(o =>
-                o.Product.ProductName == productName &&
-                o.Product.ProductSize == productSize
-            );
+            var order = await _context.Orders.Include(o => o.Product)
+                                            .FirstOrDefaultAsync(o =>
+                                                o.Product.ProductName == productName &&
+                                                o.Product.ProductSize == productSize
+                                            );
+            if (order == null)
+                throw new CustomException(HttpStatusCode.BadRequest, $"Order with product name '{productName}' and size '{productSize}' not found.");
+            return order;
         }
     }
 }

@@ -39,7 +39,8 @@ namespace Market.AuthorizationController.AuthServices
         {
             // Validates user credentials using the user service
             var user = _userService.ValidateUser(username, password);
-            if (user == null) return null;  // Invalid username or password
+            if (user == null)
+                throw new Exception("user name or password invalid.");  // Invalid username or password
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
