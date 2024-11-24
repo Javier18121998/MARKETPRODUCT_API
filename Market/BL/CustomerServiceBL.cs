@@ -100,9 +100,25 @@ namespace Market.BL
             {
                 throw new CustomException(HttpStatusCode.BadRequest, cex.Message, cex.ErrorCode);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception(ex.Message, ex.InnerException);
+                throw new CustomException(HttpStatusCode.InternalServerError, "The Customer Id was not founded.");
+            }
+        }
+
+        public async Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId)
+        {
+            try
+            {
+                return await _customerService.GetCustomerDataAsync(customerId);
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception)
+            {
+                throw new CustomException(HttpStatusCode.InternalServerError, "Error retrieving customer data");
             }
         }
     }

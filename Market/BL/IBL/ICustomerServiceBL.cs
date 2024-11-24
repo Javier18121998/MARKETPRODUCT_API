@@ -13,5 +13,6 @@ namespace Market.BL.IBL
         Task<bool> IsTokenValidAsync(string token);
         Task<bool> RevokeTokenAsync(string token);
         Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration);
+        Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId);
     }
 }

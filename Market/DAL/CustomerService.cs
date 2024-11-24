@@ -142,6 +142,17 @@ namespace Market.DAL
             }
         }
 
+        public async Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId)
+        {
+            var customerData = await _context.customerData
+                .FirstOrDefaultAsync(cd => cd.Id == customerId);
+            if (customerData == null)
+            {
+                throw new CustomException(HttpStatusCode.BadRequest, "Customer data not found or Customer not exist.", "MKPT00001");
+            }
+            return customerData;
+        }
+
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];

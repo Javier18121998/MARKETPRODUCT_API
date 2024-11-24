@@ -67,16 +67,33 @@ namespace Market.CustomersController
             return Ok(new { token });
         }
 
-        [HttpGet]
-        [SwaggerOperation(
-            Summary = "Obtiene los detalles de un Cliente",
-            Description = "Obtine los deatalles de un cliente, mediante Su Email y Contraseña.")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
+        [Authorize]
+        [HttpGet("GetCustomerData")]
+        [SwaggerOperation(Summary = "Get Customer Data", Description = "Retrieves customer data using the Customer ID from the JWT.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Customer data retrieved successfully.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
         public async Task<ActionResult> GetCustomerDataAsync()
         {
-            return Ok();
+            try
+            {
+                var customerId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "customer_id")?.Value);
+                if (customerId == 0)
+                {
+                    return BadRequest("Invalid customer ID.");
+                }
+                var customerData = await _customerServiceBL.GetCustomerDataAsync(customerId); // Call the appropriate method from the service layer
+                if (customerData == null)
+                {
+                    return NotFound("Customer data not found.");
+                }
+                return Ok(new { customerData });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving customer data.");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
 
         [HttpPut]
@@ -137,26 +154,32 @@ namespace Market.CustomersController
         [Authorize]
         [HttpPost("RegisterCustomerData")]
         [SwaggerOperation(
-            Summary = "Add the Customer Data",
-            Description = "Add the Customer Data via Customer Id from their Token.")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "No enccount this session.")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "somehting via jwt Token crash the error.")]
+            Summary = "Add Customer Data",
+            Description = "Adds customer data using the Customer ID from the JWT.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Customer data registered successfully.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
         public async Task<ActionResult> PostingDataCustomer([FromBody] CustomerDataRegistration customerDataRegistration)
         {
             try
             {
-                var customerId = Convert.ToInt32(User?.FindFirst("customer_id")?.Value);
+                var customerId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "customer_id")?.Value);
+                if (customerId == 0)
+                {
+                    return BadRequest("Invalid customer ID.");
+                }
                 var customerData = await _customerServiceBL.CustomerDataRegistration(customerId, customerDataRegistration);
-                return Ok(new { message = "Address registered successfully", customerData });
+                return Ok(new { message = "Customer data registered successfully.", customerData });
             }
             catch (CustomException cex)
             {
-                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+                _logger.LogError(cex, "Error registering customer data.");
+                return StatusCode((int)cex.StatusCode, new { message = cex.Message, errorCode = cex.ErrorCode });
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message, ex.InnerException);
+                _logger.LogError(ex, "Error registering customer data.");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
     }
