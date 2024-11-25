@@ -21,6 +21,7 @@ namespace Market.DAL
     {
         private readonly MarketDbContext _context;
         private readonly JwtSettings _jwtSettings;
+        public string errorCode { get; set; } = string.Empty;
 
         public CustomerService(IOptions<JwtSettings> jwtSettings, MarketDbContext context)
         {
@@ -44,20 +45,19 @@ namespace Market.DAL
                 await _context.SaveChangesAsync();
                 return customer;
             }
-            catch (Exception ex)
+            catch (CustomException)
             {
-                throw new Exception(ex.Message);
+                errorCode = "MKPT00004";
+                throw new CustomException(HttpStatusCode.BadRequest, "Fail to Register a new Customer", errorCode);
             }
         }
 
         public async Task<string> AuthenticateCustomerAsync(CustomerLogin login)
         {
             var customer = _context.Customers.FirstOrDefault(c => c.Email == login.Email);
-            string errorCode = string.Empty;
-
             if (customer == null || !VerifyPassword(login.Password, customer.PasswordHash))
             {
-                errorCode = "MKPT00002";
+                errorCode = "MKPT00004";
                 throw new CustomException(HttpStatusCode.BadRequest, "Enmail or Password incorrect or maybe you don't have an account", errorCode);
             }
 
@@ -130,15 +130,16 @@ namespace Market.DAL
                     City = customerDataRegistration.City,
                     PhoneNumber = customerDataRegistration.PhoneNumber,
                     CURP = customerDataRegistration.UniquePopulationRegistryCode,
-                    TaxId = customerDataRegistration.TaxId
+                    TaxId = customerDataRegistration.TaxId ?? string.Empty
                 };
                 _context.customerData.Add(customerData);
                 await _context.SaveChangesAsync();
                 return customerData;
             }
-            catch (CustomException cex)
+            catch (CustomException)
             {
-                throw new CustomException(HttpStatusCode.BadRequest, cex.Message, "MKPT00001");
+                errorCode = "MKPT00004";
+                throw new CustomException(HttpStatusCode.BadRequest, "Imposible action to register the customer data", errorCode);
             }
         }
 
@@ -148,7 +149,8 @@ namespace Market.DAL
                 .FirstOrDefaultAsync(cd => cd.Id == customerId);
             if (customerData == null)
             {
-                throw new CustomException(HttpStatusCode.BadRequest, "Customer data not found or Customer not exist.", "MKPT00001");
+                errorCode = "MKPT00004";
+                throw new CustomException(HttpStatusCode.BadRequest, "Customer data not found or Customer not exist.", errorCode);
             }
             return customerData;
         }
@@ -158,7 +160,8 @@ namespace Market.DAL
             var customerData = await _context.customerData.FindAsync(customerId);
             if (customerData == null)
             {
-                throw new CustomException(HttpStatusCode.NotFound, "Customer data not found.", "CUSTOMER_DATA_NOT_FOUND");
+                errorCode = "MKPT00003";
+                throw new CustomException(HttpStatusCode.NotFound, "Customer data not found.", errorCode);
             }
 
             // Use reflection to update only the properties that have values in the DTO
@@ -176,7 +179,8 @@ namespace Market.DAL
                         }
                         catch (ArgumentException ex)
                         {
-                            throw new CustomException(HttpStatusCode.BadRequest, $"Error updating {property.Name}: Type mismatch.", "TYPE_MISMATCH");
+                            errorCode = "MKPT00004";
+                            throw new CustomException(HttpStatusCode.BadRequest, $"Error updating {property.Name}: Type mismatch.", errorCode);
                         }
                     }
                 }

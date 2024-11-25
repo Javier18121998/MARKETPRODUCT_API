@@ -38,7 +38,11 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerRegistrationAsync([FromBody] CustomerRegistration registration)
+        public async Task<ActionResult> CustomerRegistrationAsync(
+                [FromBody]
+                CustomerRegistration
+                registration
+            )
         {
             var customer = await _customerServiceBL.RegisterCustomerAsync(registration);
             var token = await _customerServiceBL.AuthenticateCustomerAsync(new CustomerLogin
@@ -57,7 +61,11 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerLoginAccesAsync([FromBody] CustomerLogin login)
+        public async Task<ActionResult> CustomerLoginAccesAsync(
+                [FromBody]
+                CustomerLogin
+                login
+            )
         {
             var token = await _customerServiceBL.AuthenticateCustomerAsync(login);
             if (token == null)
@@ -105,7 +113,11 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, "Unauthorized.")] // Added Unauthorized response
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
-        public async Task<ActionResult> CustomerUpdateDataAsync([FromBody] CustomerDataUpdate updateCustomerDto)
+        public async Task<ActionResult> CustomerUpdateDataAsync(
+                [FromBody]
+                CustomerDataUpdate
+                updateCustomerDto
+            )
         {
             try
             {
@@ -183,7 +195,11 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.OK, "Customer data registered successfully.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
-        public async Task<ActionResult> PostingDataCustomer([FromBody] CustomerDataRegistration customerDataRegistration)
+        public async Task<ActionResult> PostingDataCustomer(
+                [FromBody]
+                CustomerDataRegistration
+                customerDataRegistration
+            )
         {
             try
             {
