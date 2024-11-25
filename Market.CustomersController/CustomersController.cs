@@ -133,7 +133,8 @@ namespace Market.CustomersController
             }
         }
 
-        [HttpDelete]
+        [Authorize]
+        [HttpDelete("DeleteCustomer")]
         [SwaggerOperation(
             Summary = "Delete a customer into the customers table.",
             Description = "Delete a customer into the customers table, mediante Su Email y Contraseña.")]
@@ -145,7 +146,7 @@ namespace Market.CustomersController
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPost("CustomerPasswordRecovery")]
         [SwaggerOperation(
             Summary = "Recover the Password",
             Description = "Recover the Password via sending an email to his mailId and sending an auth secure key.")]
