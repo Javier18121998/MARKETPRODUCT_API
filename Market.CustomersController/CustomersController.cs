@@ -77,7 +77,9 @@ namespace Market.CustomersController
 
         [Authorize]
         [HttpGet("GetCustomerData")]
-        [SwaggerOperation(Summary = "Get Customer Data", Description = "Retrieves customer data using the Customer ID from the JWT.")]
+        [SwaggerOperation(
+            Summary = "Get Customer Data",
+            Description = "Retrieves customer data using the Customer ID from the JWT.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Customer data retrieved successfully.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
