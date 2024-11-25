@@ -16,5 +16,6 @@ namespace Market.DAL.IDAL
         Task<bool> RevokeTokenAsync(string token);
         Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration);
         Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId);
+        Task<CustomerDataUpdateDto> UpdateCustomerDataAsync(int customerId, CustomerDataUpdate customerDataUpdate);
     }
 }

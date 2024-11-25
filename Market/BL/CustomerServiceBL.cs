@@ -121,5 +121,22 @@ namespace Market.BL
                 throw new CustomException(HttpStatusCode.InternalServerError, "Error retrieving customer data");
             }
         }
+
+        public async Task<CustomerDataUpdateDto> UpdateCustomerDataAsync(int customerId, CustomerDataUpdate customerDataUpdate)
+        {
+            try
+            {
+                var customerUpdatedDto = await _customerService.UpdateCustomerDataAsync(customerId, customerDataUpdate);
+                return customerUpdatedDto;
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception ex)
+            {
+                throw new CustomException(HttpStatusCode.InternalServerError, "Error updating customer data");
+            }
+        }
     }
 }

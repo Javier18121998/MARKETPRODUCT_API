@@ -153,6 +153,52 @@ namespace Market.DAL
             return customerData;
         }
 
+        public async Task<CustomerDataUpdateDto> UpdateCustomerDataAsync(int customerId, CustomerDataUpdate customerDataUpdate)
+        {
+            var customerData = await _context.customerData.FindAsync(customerId);
+            if (customerData == null)
+            {
+                throw new CustomException(HttpStatusCode.NotFound, "Customer data not found.", "CUSTOMER_DATA_NOT_FOUND");
+            }
+
+            // Use reflection to update only the properties that have values in the DTO
+            foreach (var property in typeof(CustomerDataUpdate).GetProperties()) // Reflect over CustomerDataUpdate
+            {
+                var newValue = property.GetValue(customerDataUpdate);
+                if (newValue != null)
+                {
+                    var customerProperty = typeof(CustomerDataRegistrationDto).GetProperty(property.Name);
+                    if (customerProperty != null && customerProperty.CanWrite) // Check if the property exists and is writable
+                    {
+                        try
+                        {
+                            customerProperty.SetValue(customerData, newValue);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            throw new CustomException(HttpStatusCode.BadRequest, $"Error updating {property.Name}: Type mismatch.", "TYPE_MISMATCH");
+                        }
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Create and return a DTO with updated values (map from customerData)
+            var updatedDto = new CustomerDataUpdateDto
+            {
+                StreetAddress = customerData.StreetAddress,
+                Neighborhood = customerData.Neighborhood,
+                PostalCode = customerData.PostalCode,
+                Country = customerData.Country,
+                State = customerData.State,
+                City = customerData.City,
+                PhoneNumber = customerData.PhoneNumber
+            };
+
+            return updatedDto;
+        }
+
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];
