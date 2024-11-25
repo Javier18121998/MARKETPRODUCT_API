@@ -117,8 +117,6 @@ namespace Market.CustomersController
 
                 // Update customer details
                 await _customerServiceBL.UpdateCustomerDataAsync(customerId, updateCustomerDto);
-
-
                 return Ok(new { message = "Customer data updated successfully." });
             }
             catch (CustomException cex)
