@@ -203,6 +203,71 @@ namespace Market.DAL
             return updatedDto;
         }
 
+        public async Task DeleteCustomerAsync(string tokenString)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync()) // Use a transaction for data integrity
+            {
+                try
+                {
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var token = tokenHandler.ReadJwtToken(tokenString);
+                    var customerIdClaim = token.Claims.FirstOrDefault(c => c.Type == "customer_id");
+                    if (customerIdClaim == null)
+                    {
+                        errorCode = "MKPT00004";
+                        throw new CustomException(HttpStatusCode.BadRequest, "The customer cannot be deleted or tha session has expired, please login again", errorCode);
+                    }
+                    var customerId = Convert.ToInt32(customerIdClaim.Value);
+                    await DeletingSessionCustomerAsync(customerId);
+                    await DeletingCustomerCart(customerId);
+                    await DeletingCustomerDataAsync(customerId);
+                    var customer = await _context.Customers.FindAsync(customerId);
+                    if (customer == null)
+                    {
+                        throw new CustomException(HttpStatusCode.NotFound, "Customer not found.", "MKPT00003");
+                    }
+                    _context.Customers.Remove(customer);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (CustomException cex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+                }
+            }
+        }
+
+        private async Task DeletingCustomerDataAsync(int customerId)
+        {
+            var customerData = await _context.customerData.FindAsync(customerId);
+            if (customerData == null)
+                return;
+            _context.customerData.Remove(customerData);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task DeletingSessionCustomerAsync(int customerId)
+        {
+            var customerSessions = await _context.CustomerSessions.Where(s => s.CustomerId == customerId).ToListAsync();
+            if (customerSessions.Any())
+            {
+                _context.CustomerSessions.RemoveRange(customerSessions);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task DeletingCustomerCart(int customerId)
+        {
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.CustomerId == customerId);
+            if (cart != null)
+            {
+                _context.CartItem.RemoveRange(cart.Items); // Delete items first
+                _context.Cart.Remove(cart);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];

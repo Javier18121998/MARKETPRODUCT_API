@@ -17,5 +17,6 @@ namespace Market.DAL.IDAL
         Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration);
         Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId);
         Task<CustomerDataUpdateDto> UpdateCustomerDataAsync(int customerId, CustomerDataUpdate customerDataUpdate);
+        Task DeleteCustomerAsync(string tokenString);
     }
 }

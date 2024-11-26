@@ -133,7 +133,23 @@ namespace Market.BL
             {
                 throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
             }
-            catch (Exception ex)
+            catch (Exception)
+            {
+                throw new CustomException(HttpStatusCode.InternalServerError, "Error updating customer data");
+            }
+        }
+
+        public async Task DeleteCustomerAsync(string tokenString)
+        {
+            try
+            {
+                await _customerService.DeleteCustomerAsync(tokenString);
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception)
             {
                 throw new CustomException(HttpStatusCode.InternalServerError, "Error updating customer data");
             }

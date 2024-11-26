@@ -155,7 +155,21 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
         public async Task<ActionResult> DeleteCustomerAsync()
         {
-            return Ok();
+            try
+            {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                await _customerServiceBL.DeleteCustomerAsync(token);
+                return Ok(new { message = "Customer deleted successfully." });
+            }
+            catch (CustomException cex)
+            {
+                return StatusCode((int)cex.StatusCode, new { message = cex.Message, errorCode = cex.ErrorCode });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+
         }
 
         [HttpPost("CustomerPasswordRecovery")]
