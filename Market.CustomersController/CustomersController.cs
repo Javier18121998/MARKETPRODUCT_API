@@ -172,17 +172,17 @@ namespace Market.CustomersController
 
         }
 
-        [HttpPost("CustomerPasswordRecovery")]
-        [SwaggerOperation(
-            Summary = "Recover the Password",
-            Description = "Recover the Password via sending an email to his mailId and sending an auth secure key.")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerPasswordRecoveryAsync()
-        {
-            return Ok();
-        }
+        // [HttpPost("CustomerPasswordRecovery")]
+        // [SwaggerOperation(
+        //     Summary = "Recover the Password",
+        //     Description = "Recover the Password via sending an email to his mailId and sending an auth secure key.")]
+        // [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
+        // [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
+        // [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
+        // public async Task<ActionResult> CustomerPasswordRecoveryAsync()
+        // {
+        //     return Ok();
+        // }
 
         [Authorize]
         [HttpPost("CustomerLogout")]
