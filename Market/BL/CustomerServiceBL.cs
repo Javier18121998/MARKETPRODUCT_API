@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Market.BL.IBL;
 using Market.DAL.IDAL;
@@ -85,6 +86,72 @@ namespace Market.BL
             catch (Exception ex)
             {
                 throw new Exception(ex.Message, ex.InnerException);
+            }
+        }
+
+        public async Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration)
+        {
+            try
+            {
+                var customerData = await _customerService.CustomerDataRegistration(customerId, customerDataRegistration);
+                return customerData;
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(HttpStatusCode.BadRequest, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception)
+            {
+                throw new CustomException(HttpStatusCode.InternalServerError, "The Customer Id was not founded.");
+            }
+        }
+
+        public async Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId)
+        {
+            try
+            {
+                return await _customerService.GetCustomerDataAsync(customerId);
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception)
+            {
+                throw new CustomException(HttpStatusCode.InternalServerError, "Error retrieving customer data");
+            }
+        }
+
+        public async Task<CustomerDataUpdateDto> UpdateCustomerDataAsync(int customerId, CustomerDataUpdate customerDataUpdate)
+        {
+            try
+            {
+                var customerUpdatedDto = await _customerService.UpdateCustomerDataAsync(customerId, customerDataUpdate);
+                return customerUpdatedDto;
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception)
+            {
+                throw new CustomException(HttpStatusCode.InternalServerError, "Error updating customer data");
+            }
+        }
+
+        public async Task DeleteCustomerAsync(string tokenString)
+        {
+            try
+            {
+                await _customerService.DeleteCustomerAsync(tokenString);
+            }
+            catch (CustomException cex)
+            {
+                throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+            }
+            catch (Exception)
+            {
+                throw new CustomException(HttpStatusCode.InternalServerError, "Error updating customer data");
             }
         }
     }
