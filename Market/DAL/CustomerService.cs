@@ -21,6 +21,7 @@ namespace Market.DAL
     {
         private readonly MarketDbContext _context;
         private readonly JwtSettings _jwtSettings;
+        public string errorCode { get; set; } = string.Empty;
 
         public CustomerService(IOptions<JwtSettings> jwtSettings, MarketDbContext context)
         {
@@ -44,20 +45,19 @@ namespace Market.DAL
                 await _context.SaveChangesAsync();
                 return customer;
             }
-            catch (Exception ex)
+            catch (CustomException)
             {
-                throw new Exception(ex.Message);
+                errorCode = "MKPT00004";
+                throw new CustomException(HttpStatusCode.BadRequest, "Fail to Register a new Customer", errorCode);
             }
         }
 
         public async Task<string> AuthenticateCustomerAsync(CustomerLogin login)
         {
             var customer = _context.Customers.FirstOrDefault(c => c.Email == login.Email);
-            string errorCode = string.Empty;
-
             if (customer == null || !VerifyPassword(login.Password, customer.PasswordHash))
             {
-                errorCode = "MKPT00002";
+                errorCode = "MKPT00004";
                 throw new CustomException(HttpStatusCode.BadRequest, "Enmail or Password incorrect or maybe you don't have an account", errorCode);
             }
 
@@ -113,6 +113,159 @@ namespace Market.DAL
             session.IsRevoked = true;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration)
+        {
+            try
+            {
+                var customerData = new CustomerDataRegistrationDto
+                {
+                    Id = customerId,
+                    StreetAddress = customerDataRegistration.StreetAddress,
+                    Neighborhood = customerDataRegistration.Neighborhood,
+                    PostalCode = customerDataRegistration.PostalCode,
+                    Country = customerDataRegistration.Country,
+                    State = customerDataRegistration.State,
+                    City = customerDataRegistration.City,
+                    PhoneNumber = customerDataRegistration.PhoneNumber,
+                    CURP = customerDataRegistration.UniquePopulationRegistryCode,
+                    TaxId = customerDataRegistration.TaxId ?? string.Empty
+                };
+                _context.customerData.Add(customerData);
+                await _context.SaveChangesAsync();
+                return customerData;
+            }
+            catch (CustomException)
+            {
+                errorCode = "MKPT00004";
+                throw new CustomException(HttpStatusCode.BadRequest, "Imposible action to register the customer data", errorCode);
+            }
+        }
+
+        public async Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId)
+        {
+            var customerData = await _context.customerData
+                .FirstOrDefaultAsync(cd => cd.Id == customerId);
+            if (customerData == null)
+            {
+                errorCode = "MKPT00004";
+                throw new CustomException(HttpStatusCode.BadRequest, "Customer data not found or Customer not exist.", errorCode);
+            }
+            return customerData;
+        }
+
+        public async Task<CustomerDataUpdateDto> UpdateCustomerDataAsync(int customerId, CustomerDataUpdate customerDataUpdate)
+        {
+            var customerData = await _context.customerData.FindAsync(customerId);
+            if (customerData == null)
+            {
+                errorCode = "MKPT00003";
+                throw new CustomException(HttpStatusCode.NotFound, "Customer data not found.", errorCode);
+            }
+
+            // Use reflection to update only the properties that have values in the DTO
+            foreach (var property in typeof(CustomerDataUpdate).GetProperties()) // Reflect over CustomerDataUpdate
+            {
+                var newValue = property.GetValue(customerDataUpdate);
+                if (newValue != null)
+                {
+                    var customerProperty = typeof(CustomerDataRegistrationDto).GetProperty(property.Name);
+                    if (customerProperty != null && customerProperty.CanWrite) // Check if the property exists and is writable
+                    {
+                        try
+                        {
+                            customerProperty.SetValue(customerData, newValue);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            errorCode = "MKPT00004";
+                            throw new CustomException(HttpStatusCode.BadRequest, $"Error updating {property.Name}: Type mismatch.", errorCode);
+                        }
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Create and return a DTO with updated values (map from customerData)
+            var updatedDto = new CustomerDataUpdateDto
+            {
+                StreetAddress = customerData.StreetAddress,
+                Neighborhood = customerData.Neighborhood,
+                PostalCode = customerData.PostalCode,
+                Country = customerData.Country,
+                State = customerData.State,
+                City = customerData.City,
+                PhoneNumber = customerData.PhoneNumber
+            };
+
+            return updatedDto;
+        }
+
+        public async Task DeleteCustomerAsync(string tokenString)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync()) // Use a transaction for data integrity
+            {
+                try
+                {
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var token = tokenHandler.ReadJwtToken(tokenString);
+                    var customerIdClaim = token.Claims.FirstOrDefault(c => c.Type == "customer_id");
+                    if (customerIdClaim == null)
+                    {
+                        errorCode = "MKPT00004";
+                        throw new CustomException(HttpStatusCode.BadRequest, "The customer cannot be deleted or tha session has expired, please login again", errorCode);
+                    }
+                    var customerId = Convert.ToInt32(customerIdClaim.Value);
+                    await DeletingSessionCustomerAsync(customerId);
+                    await DeletingCustomerCart(customerId);
+                    await DeletingCustomerDataAsync(customerId);
+                    var customer = await _context.Customers.FindAsync(customerId);
+                    if (customer == null)
+                    {
+                        throw new CustomException(HttpStatusCode.NotFound, "Customer not found.", "MKPT00003");
+                    }
+                    _context.Customers.Remove(customer);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (CustomException cex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
+                }
+            }
+        }
+
+        private async Task DeletingCustomerDataAsync(int customerId)
+        {
+            var customerData = await _context.customerData.FindAsync(customerId);
+            if (customerData == null)
+                return;
+            _context.customerData.Remove(customerData);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task DeletingSessionCustomerAsync(int customerId)
+        {
+            var customerSessions = await _context.CustomerSessions.Where(s => s.CustomerId == customerId).ToListAsync();
+            if (customerSessions.Any())
+            {
+                _context.CustomerSessions.RemoveRange(customerSessions);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task DeletingCustomerCart(int customerId)
+        {
+            var cart = await _context.Cart.Include(c => c.Items).FirstOrDefaultAsync(c => c.CustomerId == customerId);
+            if (cart != null)
+            {
+                _context.CartItem.RemoveRange(cart.Items); // Delete items first
+                _context.Cart.Remove(cart);
+                await _context.SaveChangesAsync();
+            }
         }
 
         private string HashPassword(string password)

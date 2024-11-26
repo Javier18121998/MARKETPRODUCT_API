@@ -1,5 +1,6 @@
 ﻿using Market.BL.IBL;
 using Market.DataModels.EFModels;
+using Market.Exceptions;
 using Market.Utilities.BaseControllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,14 +31,18 @@ namespace Market.CustomersController
             return isValid ? Ok(new { message = "Token is valid." }) : Unauthorized(new { message = "Token is invalid or expired." });
         }
 
-        [HttpPost("Register")]
+        [HttpPost("CustomerRegistration")]
         [SwaggerOperation(
             Summary = "Obtiene los detalles de un Cliente",
             Description = "Obtine los deatalles de un cliente, mediante Su Email y Contraseña.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerRegistratioAsync([FromBody] CustomerRegistration registration)
+        public async Task<ActionResult> CustomerRegistrationAsync(
+                [FromBody]
+                CustomerRegistration
+                registration
+            )
         {
             var customer = await _customerServiceBL.RegisterCustomerAsync(registration);
             var token = await _customerServiceBL.AuthenticateCustomerAsync(new CustomerLogin
@@ -49,14 +54,18 @@ namespace Market.CustomersController
             return Ok(new { customer, token });
         }
 
-        [HttpPost("login")]
+        [HttpPost("CustomerLoginAcces")]
         [SwaggerOperation(
             Summary = "Obtiene los detalles de un Cliente",
             Description = "Obtine los deatalles de un cliente, mediante Su Email y Contraseña.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerLoginAccesAsync([FromBody] CustomerLogin login)
+        public async Task<ActionResult> CustomerLoginAccesAsync(
+                [FromBody]
+                CustomerLogin
+                login
+            )
         {
             var token = await _customerServiceBL.AuthenticateCustomerAsync(login);
             if (token == null)
@@ -66,31 +75,78 @@ namespace Market.CustomersController
             return Ok(new { token });
         }
 
-        [HttpGet]
+        [Authorize]
+        [HttpGet("GetCustomerData")]
         [SwaggerOperation(
-            Summary = "Obtiene los detalles de un Cliente",
-            Description = "Obtine los deatalles de un cliente, mediante Su Email y Contraseña.")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
+            Summary = "Get Customer Data",
+            Description = "Retrieves customer data using the Customer ID from the JWT.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Customer data retrieved successfully.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
         public async Task<ActionResult> GetCustomerDataAsync()
         {
-            return Ok();
+            try
+            {
+                var customerId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "customer_id")?.Value);
+                if (customerId == 0)
+                {
+                    return BadRequest("Invalid customer ID.");
+                }
+                var customerData = await _customerServiceBL.GetCustomerDataAsync(customerId); // Call the appropriate method from the service layer
+                if (customerData == null)
+                {
+                    return NotFound("Customer data not found.");
+                }
+                return Ok(new { customerData });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving customer data.");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
 
-        [HttpPut]
+        [Authorize]
+        [HttpPut("CustomerUpdateData")]
         [SwaggerOperation(
-            Summary = "Update all details of a customer.",
-            Description = "Via mailId and password.")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerUpdateDataAsync()
+            Summary = "Update customer details.",
+            Description = "Updates customer details using the Customer ID from the JWT and provided data.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Customer data updated successfully.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, "Unauthorized.")] // Added Unauthorized response
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
+        public async Task<ActionResult> CustomerUpdateDataAsync(
+                [FromBody]
+                CustomerDataUpdate
+                updateCustomerDto
+            )
         {
-            return Ok();
+            try
+            {
+                var customerId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "customer_id")?.Value);
+                if (customerId == 0)
+                {
+                    return Unauthorized("Invalid customer ID."); // Return Unauthorized if ID is missing or invalid
+                }
+
+                // Update customer details
+                await _customerServiceBL.UpdateCustomerDataAsync(customerId, updateCustomerDto);
+                return Ok(new { message = "Customer data updated successfully." });
+            }
+            catch (CustomException cex)
+            {
+                _logger.LogError(cex, "Error updating customer data.");
+                return StatusCode((int)cex.StatusCode, new { message = cex.Message, errorCode = cex.ErrorCode });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating customer data.");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
 
-        [HttpDelete]
+        [Authorize]
+        [HttpDelete("DeleteCustomer")]
         [SwaggerOperation(
             Summary = "Delete a customer into the customers table.",
             Description = "Delete a customer into the customers table, mediante Su Email y Contraseña.")]
@@ -99,30 +155,44 @@ namespace Market.CustomersController
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
         public async Task<ActionResult> DeleteCustomerAsync()
         {
-            return Ok();
+            try
+            {
+                var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                await _customerServiceBL.DeleteCustomerAsync(token);
+                return Ok(new { message = "Customer deleted successfully." });
+            }
+            catch (CustomException cex)
+            {
+                return StatusCode((int)cex.StatusCode, new { message = cex.Message, errorCode = cex.ErrorCode });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+
         }
 
-        [HttpPost]
-        [SwaggerOperation(
-            Summary = "Recover the Password",
-            Description = "Recover the Password via sending an email to his mailId and sending an auth secure key.")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
-        public async Task<ActionResult> CustomerPasswordRecoveryAsync()
-        {
-            return Ok();
-        }
+        // [HttpPost("CustomerPasswordRecovery")]
+        // [SwaggerOperation(
+        //     Summary = "Recover the Password",
+        //     Description = "Recover the Password via sending an email to his mailId and sending an auth secure key.")]
+        // [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
+        // [SwaggerResponse((int)HttpStatusCode.BadRequest, ".")]
+        // [SwaggerResponse((int)HttpStatusCode.InternalServerError, ".")]
+        // public async Task<ActionResult> CustomerPasswordRecoveryAsync()
+        // {
+        //     return Ok();
+        // }
 
         [Authorize]
-        [HttpPost("logout")]
+        [HttpPost("CustomerLogout")]
         [SwaggerOperation(
             Summary = "Logout the CustomerSession",
             Description = "Close the session via jwt Token active revoke session.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Succeded.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "No enccount this session.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "somehting via jwt Token crash the error.")]
-        public async Task<ActionResult> LogoutAsync()
+        public async Task<ActionResult> CustomerLogoutAsync()
         {
             var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var result = await _customerServiceBL.RevokeTokenAsync(token);
@@ -131,6 +201,42 @@ namespace Market.CustomersController
                 return BadRequest(new { message = "Failed to logout." });
             }
             return Ok(new { message = "Successfully logged out." });
+        }
+
+        [Authorize]
+        [HttpPost("PostingDataCustomer")]
+        [SwaggerOperation(
+            Summary = "Add Customer Data",
+            Description = "Adds customer data using the Customer ID from the JWT.")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Customer data registered successfully.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
+        public async Task<ActionResult> PostingDataCustomer(
+                [FromBody]
+                CustomerDataRegistration
+                customerDataRegistration
+            )
+        {
+            try
+            {
+                var customerId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "customer_id")?.Value);
+                if (customerId == 0)
+                {
+                    return BadRequest("Invalid customer ID.");
+                }
+                var customerData = await _customerServiceBL.CustomerDataRegistration(customerId, customerDataRegistration);
+                return Ok(new { message = "Customer data registered successfully.", customerData });
+            }
+            catch (CustomException cex)
+            {
+                _logger.LogError(cex, "Error registering customer data.");
+                return StatusCode((int)cex.StatusCode, new { message = cex.Message, errorCode = cex.ErrorCode });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error registering customer data.");
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
     }
 }
