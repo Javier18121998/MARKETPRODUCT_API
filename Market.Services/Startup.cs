@@ -7,7 +7,7 @@ namespace MARKETPRODUCT_API
     /// Configures services and middleware components for the MARKETPRODUCT_API application.
     /// This class handles dependency injection and sets up the necessary configurations for services.
     /// </summary>
-    public class Startup : CommonStartup
+    public class Startup
     {
         /// <summary>
         /// Initializes a new instance of the Startup class with the specified configuration.
@@ -44,18 +44,18 @@ namespace MARKETPRODUCT_API
             // Configure Authorization 
             services.AddAuthorization();
             // Configure API Versioning
-            CommonVersioningApplication(services);
+            services.CommonVersioningApplication();
             // Swagger Configuration for many versions
-            CommonSwaggerConfigurations(services);
+            services.CommonSwaggerConfigurations();
             // Database Configuration
-            ConfigureDatabase(services, Configuration);
+            services.ConfigureDatabase(Configuration);
             //Adding JWTBEarer services
             #region JWTConfiguration Auth
             services.JwtBearerServices();
             #endregion
             // Application Services Registration
             #region Registry of services application
-            RegisterCommonServices(services);
+            services.RegisterCommonServices();
             #endregion
         }
 
@@ -69,7 +69,7 @@ namespace MARKETPRODUCT_API
         /// <param name="env">The hosting environment to determine the app's behavior.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            CommonConfigure(app, env);
+            app.CommonConfigure(env);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
