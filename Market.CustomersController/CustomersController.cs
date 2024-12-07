@@ -92,7 +92,8 @@ namespace Market.CustomersController
                 {
                     return BadRequest("Invalid customer ID.");
                 }
-                var customerData = await _customerServiceBL.GetCustomerDataAsync(customerId); // Call the appropriate method from the service layer
+                // Call the appropriate method from the service layer
+                var customerData = await _customerServiceBL.GetCustomerDataAsync(customerId);
                 if (customerData == null)
                 {
                     return NotFound("Customer data not found.");
@@ -113,7 +114,7 @@ namespace Market.CustomersController
             Description = "Updates customer details using the Customer ID from the JWT and provided data.")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Customer data updated successfully.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad Request.")]
-        [SwaggerResponse((int)HttpStatusCode.Unauthorized, "Unauthorized.")] // Added Unauthorized response
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, "Unauthorized.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server Error.")]
         public async Task<ActionResult> CustomerUpdateDataAsync(
                 [FromBody]
@@ -126,7 +127,8 @@ namespace Market.CustomersController
                 var customerId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "customer_id")?.Value);
                 if (customerId == 0)
                 {
-                    return Unauthorized("Invalid customer ID."); // Return Unauthorized if ID is missing or invalid
+                    // Return Unauthorized if ID is missing or invalid
+                    return Unauthorized("Invalid customer ID.");
                 }
 
                 // Update customer details

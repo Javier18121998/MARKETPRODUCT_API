@@ -14,6 +14,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Mail;
+using Microsoft.Extensions.Logging;
 
 namespace Market.DAL
 {
@@ -21,16 +23,19 @@ namespace Market.DAL
     {
         private readonly MarketDbContext _context;
         private readonly JwtSettings _jwtSettings;
-        public string errorCode { get; set; } = string.Empty;
+        private readonly ILogger<CustomerService> _logger;
+        private string errorCode { get; set; } = string.Empty;
 
-        public CustomerService(IOptions<JwtSettings> jwtSettings, MarketDbContext context)
+        public CustomerService(IOptions<JwtSettings> jwtSettings, MarketDbContext context, ILogger<CustomerService> logger)
         {
             _jwtSettings = jwtSettings.Value;
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Customer> RegisterCustomerAsync(CustomerRegistration registration)
         {
+            _logger.LogDebug("Registering a new Customer.");
             try
             {
                 var dateTime = DateTime.UtcNow;
@@ -43,10 +48,12 @@ namespace Market.DAL
                 };
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
+                _logger.LogDebug("Customer registered successfully.");
                 return customer;
             }
             catch (CustomException)
             {
+                _logger.LogError("Fail to Register a new Customer.");
                 errorCode = "MKPT00004";
                 throw new CustomException(HttpStatusCode.BadRequest, "Fail to Register a new Customer", errorCode);
             }
@@ -54,9 +61,11 @@ namespace Market.DAL
 
         public async Task<string> AuthenticateCustomerAsync(CustomerLogin login)
         {
+            _logger.LogDebug("Authenticating Customer.");
             var customer = _context.Customers.FirstOrDefault(c => c.Email == login.Email);
             if (customer == null || !VerifyPassword(login.Password, customer.PasswordHash))
             {
+                _logger.LogError("Customer not exist or the password is incorrect.");
                 errorCode = "MKPT00004";
                 throw new CustomException(HttpStatusCode.BadRequest, "Enmail or Password incorrect or maybe you don't have an account", errorCode);
             }
@@ -87,8 +96,10 @@ namespace Market.DAL
                 ExpiresAt = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationMinutes)
             };
 
+            _logger.LogDebug("Adding new session.");
             _context.CustomerSessions.Add(session);
             await _context.SaveChangesAsync();
+            _logger.LogDebug("Session added successfully.");
 
             return tokenString;
         }
@@ -103,20 +114,24 @@ namespace Market.DAL
 
         public async Task<bool> RevokeTokenAsync(string token)
         {
+            _logger.LogDebug("Revoking token.");
             var session = await _context.CustomerSessions.FirstOrDefaultAsync(cs => cs.Token == token);
 
             if (session == null || session.IsRevoked)
             {
+                _logger.LogError("Token not found or already revoked.");
                 return false;
             }
 
             session.IsRevoked = true;
             await _context.SaveChangesAsync();
+            _logger.LogDebug("Token revoked successfully.");
             return true;
         }
 
         public async Task<CustomerDataRegistrationDto> CustomerDataRegistration(int customerId, CustomerDataRegistration customerDataRegistration)
         {
+            _logger.LogDebug("Registering customer data.");
             try
             {
                 var customerData = new CustomerDataRegistrationDto
@@ -134,10 +149,12 @@ namespace Market.DAL
                 };
                 _context.customerData.Add(customerData);
                 await _context.SaveChangesAsync();
+                _logger.LogDebug("Customer data registered successfully.");
                 return customerData;
             }
             catch (CustomException)
             {
+                _logger.LogError("Imposible action to register the customer data.");
                 errorCode = "MKPT00004";
                 throw new CustomException(HttpStatusCode.BadRequest, "Imposible action to register the customer data", errorCode);
             }
@@ -145,28 +162,34 @@ namespace Market.DAL
 
         public async Task<CustomerDataRegistrationDto> GetCustomerDataAsync(int customerId)
         {
+            _logger.LogDebug("Retrieving customer data.");
             var customerData = await _context.customerData
                 .FirstOrDefaultAsync(cd => cd.Id == customerId);
             if (customerData == null)
             {
+                _logger.LogError("Customer data not found or Customer not exist.");
                 errorCode = "MKPT00004";
                 throw new CustomException(HttpStatusCode.BadRequest, "Customer data not found or Customer not exist.", errorCode);
             }
+            _logger.LogDebug("Customer data retrieved successfully.");
             return customerData;
         }
 
         public async Task<CustomerDataUpdateDto> UpdateCustomerDataAsync(int customerId, CustomerDataUpdate customerDataUpdate)
         {
+            _logger.LogDebug("Updating customer data.");
             var customerData = await _context.customerData.FindAsync(customerId);
             if (customerData == null)
             {
+                _logger.LogError("Customer data not found or Customer does not exist.");
                 errorCode = "MKPT00003";
                 throw new CustomException(HttpStatusCode.NotFound, "Customer data not found.", errorCode);
             }
 
             // Use reflection to update only the properties that have values in the DTO
-            foreach (var property in typeof(CustomerDataUpdate).GetProperties()) // Reflect over CustomerDataUpdate
+            foreach (var property in typeof(CustomerDataUpdate).GetProperties())
             {
+                // Reflect over CustomerDataUpdate
                 var newValue = property.GetValue(customerDataUpdate);
                 if (newValue != null)
                 {
@@ -187,6 +210,7 @@ namespace Market.DAL
             }
 
             await _context.SaveChangesAsync();
+            _logger.LogDebug("Customer data updated successfully.");
 
             // Create and return a DTO with updated values (map from customerData)
             var updatedDto = new CustomerDataUpdateDto
@@ -199,12 +223,12 @@ namespace Market.DAL
                 City = customerData.City,
                 PhoneNumber = customerData.PhoneNumber
             };
-
             return updatedDto;
         }
 
         public async Task DeleteCustomerAsync(string tokenString)
         {
+            _logger.LogDebug("Deleting customer.");
             using (var transaction = await _context.Database.BeginTransactionAsync()) // Use a transaction for data integrity
             {
                 try
@@ -214,12 +238,16 @@ namespace Market.DAL
                     var customerIdClaim = token.Claims.FirstOrDefault(c => c.Type == "customer_id");
                     if (customerIdClaim == null)
                     {
+                        _logger.LogError("The session has expired, please login again.");
                         errorCode = "MKPT00004";
                         throw new CustomException(HttpStatusCode.BadRequest, "The customer cannot be deleted or tha session has expired, please login again", errorCode);
                     }
                     var customerId = Convert.ToInt32(customerIdClaim.Value);
-                    await DeletingSessionCustomerAsync(customerId);
+                    _logger.LogDebug("Deleting customer cart items.");
                     await DeletingCustomerCart(customerId);
+                    _logger.LogDebug("Deleting customer sessions.");
+                    await DeletingSessionCustomerAsync(customerId);
+                    _logger.LogDebug("Deleting customer data.");
                     await DeletingCustomerDataAsync(customerId);
                     var customer = await _context.Customers.FindAsync(customerId);
                     if (customer == null)
@@ -228,10 +256,12 @@ namespace Market.DAL
                     }
                     _context.Customers.Remove(customer);
                     await _context.SaveChangesAsync();
+                    _logger.LogDebug("Customer deleted successfully.");
                     await transaction.CommitAsync();
                 }
                 catch (CustomException cex)
                 {
+                    _logger.LogError("Error deleting customer.");
                     await transaction.RollbackAsync();
                     throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
                 }
@@ -241,10 +271,14 @@ namespace Market.DAL
         private async Task DeletingCustomerDataAsync(int customerId)
         {
             var customerData = await _context.customerData.FindAsync(customerId);
-            if (customerData == null)
-                return;
-            _context.customerData.Remove(customerData);
-            await _context.SaveChangesAsync();
+            if (customerData != null)
+            {
+                _context.customerData.Remove(customerData);
+                await _context.SaveChangesAsync();
+                _logger.LogDebug("Customer data deleted successfully.");
+            }
+            else
+                _logger.LogError("Customer data not found.");
         }
 
         private async Task DeletingSessionCustomerAsync(int customerId)
@@ -254,7 +288,10 @@ namespace Market.DAL
             {
                 _context.CustomerSessions.RemoveRange(customerSessions);
                 await _context.SaveChangesAsync();
+                _logger.LogDebug("Customer sessions delted successfully.");
             }
+            else
+                _logger.LogError("Customer sessions not found.");
         }
 
         private async Task DeletingCustomerCart(int customerId)
@@ -265,7 +302,10 @@ namespace Market.DAL
                 _context.CartItem.RemoveRange(cart.Items); // Delete items first
                 _context.Cart.Remove(cart);
                 await _context.SaveChangesAsync();
+                _logger.LogDebug("Customer cart deleted successfully.");
             }
+            else
+                _logger.LogError("Customer cart not found.");
         }
 
         private string HashPassword(string password)
