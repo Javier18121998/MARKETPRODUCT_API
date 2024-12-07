@@ -33,7 +33,10 @@ namespace Market.CartsController
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Error al añadir el producto.")]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, "No autorizado.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Error de servidor.")]
-        public async Task<ActionResult> AddItemToCart([FromBody] CartItemRequest cartItemRequest)
+        public async Task<ActionResult> AddItemToCart(
+                [FromBody]
+                CartItemRequest cartItemRequest
+            )
         {
             if (cartItemRequest == null)
             {
@@ -78,7 +81,7 @@ namespace Market.CartsController
         }
 
         [Authorize]
-        [HttpGet("current")]
+        [HttpGet("current-cart")]
         [SwaggerOperation(
             Summary = "Obtiene el carrito actual del cliente",
             Description = "Devuelve el contenido del carrito actual del cliente."
@@ -122,7 +125,10 @@ namespace Market.CartsController
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Error al eliminar el producto.")]
         [SwaggerResponse((int)HttpStatusCode.Unauthorized, "No autorizado.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Error de servidor.")]
-        public async Task<ActionResult> RemoveItemFromCart([FromBody] RemoveCartItemRequest removeRequest)
+        public async Task<ActionResult> RemoveItemFromCart(
+                [FromBody]
+                RemoveCartItemRequest removeRequest
+            )
         {
             if (removeRequest == null)
             {
