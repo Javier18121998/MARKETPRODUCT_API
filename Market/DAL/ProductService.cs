@@ -42,6 +42,7 @@ namespace Market.DAL
         {
             try
             {
+                _logger.LogDebug("Starting CreateProductAsync for product: {ProductName}, Size: {Size}", product.Name, product.Size);
                 if (IsLiquid(product.Size))
                 {
                     await IsLiquidProductDuplicateAsync(product);
@@ -66,11 +67,14 @@ namespace Market.DAL
 
                 _context.Products.Add(productCreated);
                 await _context.SaveChangesAsync();
+
+                _logger.LogDebug("Product created successfully with ID: {ProductId}", productCreated.Id);
                 return productCreated;
             }
-            catch (Exception)
+            catch (CustomException ex)
             {
-                throw;
+                _logger.LogError(ex, "Error occurred while creating product: {ProductName}, Size: {Size}", product.Name, product.Size);
+                throw new CustomException(ex.StatusCode, ex.Message, ex.ErrorCode);
             }
         }
 
@@ -82,14 +86,24 @@ namespace Market.DAL
         /// <returns></returns>
         public async Task DeleteProductByIdAsync(int id)
         {
+            _logger.LogDebug("Attempting to delete product with ID: {Id}", id);
             if (await _productValidationService.ProductExistsByIdAsync(id))
             {
                 var product = await _context.Products.FindAsync(id);
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                if (product != null)
+                {
+                    _context.Products.Remove(product);
+                    await _context.SaveChangesAsync();
+                    _logger.LogDebug("Product with ID: {Id} deleted successfully.", id);
+                }
+                else
+                {
+                    _logger.LogWarning("Product with ID: {Id} was not found in the database.", id);
+                }
             }
             else
             {
+                _logger.LogError("Validation failed: Product with ID: {Id} does not exist.", id);
                 throw new Exception("The product with the specified ID does not exist.");
             }
         }
@@ -102,17 +116,26 @@ namespace Market.DAL
         /// <returns></returns>
         public async Task DeleteProductByNameAndSizeAsync(string name, string size)
         {
+            _logger.LogDebug("Attempting to delete product with Name: {Name}, Size: {Size}", name, size);
             if (await _productValidationService.ProductExistsByNameAndSizeAsync(name, size))
             {
                 var product = await _context.Products.FirstOrDefaultAsync(
                     p => p.ProductName == name &&
                     p.ProductSize == size
                 );
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                if (product != null)
+                {
+                    _context.Products.Remove(product);
+                    await _context.SaveChangesAsync(); _logger.LogInformation("Product with Name: {Name}, Size: {Size} deleted successfully.", name, size);
+                }
+                else
+                {
+                    _logger.LogWarning("Product with Name: {Name}, Size: {Size} was not found in the database.", name, size);
+                }
             }
             else
             {
+                _logger.LogError("Validation failed: Product with Name: {Name}, Size: {Size} does not exist.", name, size);
                 throw new Exception("The product with the specified name and size does not exist.");
             }
         }
@@ -120,22 +143,31 @@ namespace Market.DAL
         /// <summary>
         /// Retrieves all products.
         /// </summary>
-        /// <returns>A list of all products.</returns>
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
+            _logger.LogDebug("Retrieving all products.");
             var products = await _context.Products.ToListAsync();
+            _logger.LogDebug("{Count} products retrieved successfully.", products.Count);
             return products;
         }
 
         /// <summary>
         /// Retrieves a product by its ID.
         /// </summary>
-        /// <param name="id">The ID of the product.</param>
-        /// <returns>The corresponding product.</returns>
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
+            _logger.LogDebug("Retrieving product with ID: {Id}", id);
             var productById = await _context.Products.FindAsync(id);
-            return productById;
+            if (productById != null)
+            {
+                _logger.LogDebug("Product with ID: {Id} retrieved successfully.", id);
+                return productById;
+            }
+            else
+            {
+                _logger.LogError("Product with ID: {Id} not found.", id);
+                throw new CustomException(HttpStatusCode.NotFound, "The product with the specified ID does not exist.", "");
+            }
         }
 
         /// <summary>
@@ -146,12 +178,32 @@ namespace Market.DAL
         /// <returns>The corresponding product.</returns>
         public async Task<ProductDto> GetProductByNameAndSizeAsync(string name, string size)
         {
-            var productByNameAndSize = await _context.Products.FirstOrDefaultAsync(
-                p => p.ProductName == name &&
-                p.ProductSize == size
-            );
-            return productByNameAndSize;
+            _logger.LogDebug("Attempting to retrieve product with Name: {Name} and Size: {Size}.", name, size);
+            try
+            {
+                var productByNameAndSize = await _context.Products.FirstOrDefaultAsync(
+                    p => p.ProductName == name &&
+                    p.ProductSize == size
+                );
+
+                if (productByNameAndSize != null)
+                {
+                    _logger.LogDebug("Product found with Name: {Name} and Size: {Size}.", name, size);
+                    return productByNameAndSize;
+                }
+                else
+                {
+                    _logger.LogWarning("No product found with Name: {Name} and Size: {Size}.", name, size);
+                    throw new CustomException(HttpStatusCode.NotFound, "The product with the specified Name and Size does not exist. Try with another name or size.", "");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the product with Name: {Name} and Size: {Size}.", name, size);
+                throw;
+            }
         }
+
 
         /// <summary>
         /// Updates the description of a product by its ID.
@@ -161,15 +213,30 @@ namespace Market.DAL
         /// <returns></returns>
         public async Task UpdateDescriptionByIdAsync(int id, string newDescription)
         {
-            if (await _productValidationService.ProductExistsByIdAsync(id))
+            _logger.LogDebug("Attempting to update description for product with ID: {Id}.", id);
+            try
             {
-                var product = await _context.Products.FindAsync(id);
-                product.ProductDescription = newDescription;
-                await _context.SaveChangesAsync();
+                if (await _productValidationService.ProductExistsByIdAsync(id))
+                {
+                    var product = await _context.Products.FindAsync(id);
+                    if (product != null)
+                    {
+                        _logger.LogDebug("Product found with ID: {Id}. Updating description.", id);
+                        product.ProductDescription = newDescription;
+                        await _context.SaveChangesAsync();
+                        _logger.LogDebug("Successfully updated description for product with ID: {Id}.", id);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Product with ID: {Id} does not exist.", id);
+                    throw new CustomException(HttpStatusCode.BadRequest, "The product with the specified ID does not exist.", "");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new Exception("The product with the specified ID does not exist.");
+                _logger.LogError(ex, "An error occurred while updating the description for product with ID: {Id}.", id);
+                throw;
             }
         }
 
@@ -182,18 +249,33 @@ namespace Market.DAL
         /// <returns></returns>
         public async Task UpdateDescriptionByNameAndSizeAsync(string name, string size, string newDescription)
         {
-            if (await _productValidationService.ProductExistsByNameAndSizeAsync(name, size))
+            _logger.LogDebug("Attempting to update description for product with Name: {Name} and Size: {Size}.", name, size);
+            try
             {
-                var product = await _context.Products.FirstOrDefaultAsync(
-                    p => p.ProductName == name &&
-                    p.ProductSize == size
-                );
-                product.ProductDescription = newDescription;
-                await _context.SaveChangesAsync();
+                if (await _productValidationService.ProductExistsByNameAndSizeAsync(name, size))
+                {
+                    var product = await _context.Products.FirstOrDefaultAsync(
+                        p => p.ProductName == name &&
+                        p.ProductSize == size
+                    );
+                    if (product != null)
+                    {
+                        _logger.LogDebug("Product found with Name: {Name} and Size: {Size}. Updating description.", name, size);
+                        product.ProductDescription = newDescription;
+                        await _context.SaveChangesAsync();
+                        _logger.LogDebug("Successfully updated description for product with Name: {Name} and Size: {Size}.", name, size);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Product with Name: {Name} and Size: {Size} does not exist.", name, size);
+                    throw new Exception("The product with the specified name and size does not exist.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new Exception("The product with the specified name and size does not exist.");
+                _logger.LogError(ex, "An error occurred while updating the description for product with Name: {Name} and Size: {Size}.", name, size);
+                throw;
             }
         }
 
