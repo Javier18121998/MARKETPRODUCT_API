@@ -1,3 +1,4 @@
+using Market.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -8,6 +9,7 @@ namespace MARKETPRODUCT_API
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
+            CommonProgram.CommonMainPrediction();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

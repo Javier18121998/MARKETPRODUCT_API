@@ -2,12 +2,15 @@
 using Market.DAL.IDAL;
 using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
+using Market.DataModels.MLModels;
 using Market.Exceptions;
+using Market.MLServices;
 using Market.Utilities.MQServices.IManageServices;
 using Market.Utilities.MQServices.IProduceServices;
 using Market.Utilities.MQServices.ManageServices;
 using Market.Utilities.MQServices.MQModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +23,20 @@ namespace Market.BL
     {
         private readonly IProductService _productService;
         private readonly IMQProducer _mQProducer;
+        private readonly OperationPredictor _operationPredictor;
+        private readonly ILogger<ProductServiceBL> _logger;
 
 
-        public ProductServiceBL(IProductService productService, IMQProducer mQProducer)
+        public ProductServiceBL(
+            IProductService productService, 
+            IMQProducer mQProducer, 
+            OperationPredictor operationPredictor, 
+            ILogger<ProductServiceBL> logger)
         {
             _productService = productService;
             _mQProducer = mQProducer;
+            _operationPredictor = operationPredictor;
+            _logger = logger;
         }
 
         /// <summary>
@@ -39,7 +50,11 @@ namespace Market.BL
             {
                 var productCreated = await _productService.CreateProductAsync(product);
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 return productCreated;
@@ -47,7 +62,11 @@ namespace Market.BL
             catch (CustomException cex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new CustomException(cex.StatusCode, cex.Message, cex.ErrorCode);
@@ -55,7 +74,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);
@@ -68,10 +91,15 @@ namespace Market.BL
         /// <param name="id">The ID of the product to delete.</param>
         public async Task DeleteProductByIdAsync(int id, LogMessage logMessage)
         {
+            var operationPredictor = new OperationPredictor();
             try
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 await _productService.DeleteProductByIdAsync(id);
@@ -79,7 +107,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);
@@ -93,10 +125,15 @@ namespace Market.BL
         /// <param name="size">The size of the product to delete.</param>
         public async Task DeleteProductByNameAndSizeAsync(string name, string size, LogMessage logMessage)
         {
+            var operationPredictor = new OperationPredictor();
             try
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 await _productService.DeleteProductByNameAndSizeAsync(name, size);
@@ -104,7 +141,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);
@@ -117,11 +158,16 @@ namespace Market.BL
         /// <returns>A collection of product DTOs.</returns>
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync(LogMessage logMessage)
         {
+            var operationPredictor = new OperationPredictor();
             try
             {
                 var products = await _productService.GetAllProductsAsync();
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 return products;
@@ -129,7 +175,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);
@@ -143,11 +193,16 @@ namespace Market.BL
         /// <returns>The corresponding product DTO.</returns>
         public async Task<ProductDto> GetProductByIdAsync(int id, LogMessage logMessage)
         {
+            var operationPredictor = new OperationPredictor();
             try
             {
                 var product = await _productService.GetProductByIdAsync(id);
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 return product;
@@ -155,7 +210,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);
@@ -170,11 +229,16 @@ namespace Market.BL
         /// <returns>The corresponding product DTO.</returns>
         public async Task<ProductDto> GetProductByNameAndSizeAsync(string name, string size, LogMessage logMessage)
         {
+            var operationPredictor = new OperationPredictor();
             try
             {
                 var productByNameAndSize = await _productService.GetProductByNameAndSizeAsync(name, size);
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 return productByNameAndSize;
@@ -182,7 +246,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);
@@ -196,10 +264,15 @@ namespace Market.BL
         /// <param name="newDescription">The new description for the product.</param>
         public async Task UpdateDescriptionByIdAsync(int id, string newDescription, LogMessage logMessage)
         {
+            var operationPredictor = new OperationPredictor();
             try
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 await _productService.UpdateDescriptionByIdAsync(id, newDescription);
@@ -207,7 +280,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);
@@ -222,10 +299,15 @@ namespace Market.BL
         /// <param name="newDescription">The new description for the product.</param>
         public async Task UpdateDescriptionByNameAndSizeAsync(string name, string size, string newDescription, LogMessage logMessage)
         {
+            var operationPredictor = new OperationPredictor();
             try
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage);
                 #endregion
                 await _productService.UpdateDescriptionByNameAndSizeAsync(name, size, newDescription);
@@ -233,7 +315,11 @@ namespace Market.BL
             catch (Exception ex)
             {
                 #region Broker Message insertions by MQProducerMessageLogger
-                IMQManagerService mQManagerService = new MQManagerService(_mQProducer);
+                IMQManagerService mQManagerService = new MQManagerService(
+                    _mQProducer, 
+                    _operationPredictor, 
+                    _logger
+                );
                 await mQManagerService.ConfigureMessageSendingAsync(logMessage, false);
                 #endregion
                 throw new Exception(ex.Message);

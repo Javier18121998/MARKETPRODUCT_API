@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Market.Market.Models;
 using Microsoft.EntityFrameworkCore;
+using Market.MLServices;
 
 namespace MARKETPRODUCT_API
 {
@@ -46,6 +47,7 @@ namespace MARKETPRODUCT_API
             services.AddScoped<IMQManagerService, MQManagerService>();
             services.AddScoped<IMQProducer, MQProducer>();
             services.AddScoped<IUserService, UserService>();
+            services.AddTransient<OperationPredictor>();
         }
 
         /// <summary>
