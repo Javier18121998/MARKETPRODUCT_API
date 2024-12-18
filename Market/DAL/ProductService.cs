@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Tensorflow.Contexts;
 
 namespace Market.DAL
 {
@@ -53,7 +54,7 @@ namespace Market.DAL
                 }
                 else
                 {
-                    throw new Exception("Unknown product size format.");
+                    DuplicateProductCheck(product);
                 }
 
                 var productCreated = new ProductDto
@@ -434,6 +435,38 @@ namespace Market.DAL
             return lowerSize.Contains("kg") || lowerSize.Contains("g") || lowerSize.Contains("gramos") ||
                    lowerSize.Contains("kilos") || lowerSize.Contains("kilogramo") || lowerSize.Contains("miligramos") ||
                    lowerSize.Contains("kilogramos") || lowerSize.Contains("mg");
+        }
+
+        private void DuplicateProductCheck(Product product)
+        {
+            var productsDuplicated = _context.Products
+                .Where(p => p.ProductName == product.Name)
+                .Select(p => new
+                {
+                    p.ProductName,
+                    p.ProductSize
+                })
+                .ToList();
+
+            if(productsDuplicated.Any())
+            {
+                foreach(var productsExisted in productsDuplicated)
+                {
+                    ValidateDuplicatedProducts(productsExisted.ProductSize, product.Size);
+                }
+            }
+        }
+
+        private void ValidateDuplicatedProducts(string productSize, string size)
+        {
+            if(string.IsNullOrEmpty(size))
+            {
+                throw new CustomException(HttpStatusCode.BadRequest, "Invalid size format.", "0004");
+            }
+            if(productSize == size)
+            {
+                throw new CustomException(HttpStatusCode.BadRequest, "The product is already exists.", "0004");
+            }
         }
         #endregion
     }
