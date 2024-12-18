@@ -27,7 +27,11 @@ namespace Market.DAL
         private readonly IProductValidationService _productValidationService;
         private readonly ILogger<ProductService> _logger;
 
-        public ProductService(MarketDbContext context, IProductValidationService productValidationService, ILogger<ProductService> logger)
+        public ProductService(
+                MarketDbContext context, 
+                IProductValidationService productValidationService, 
+                ILogger<ProductService> logger
+            )
         {
             _context = context;
             _productValidationService = productValidationService;
@@ -105,7 +109,7 @@ namespace Market.DAL
             else
             {
                 _logger.LogError("Validation failed: Product with ID: {Id} does not exist.", id);
-                throw new Exception("The product with the specified ID does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The product with the specified ID does not exist.", "0004");
             }
         }
 
@@ -137,7 +141,7 @@ namespace Market.DAL
             else
             {
                 _logger.LogError("Validation failed: Product with Name: {Name}, Size: {Size} does not exist.", name, size);
-                throw new Exception("The product with the specified name and size does not exist.");
+                throw new CustomException(HttpStatusCode.BadRequest, "The product with the specified name and size does not exist.", "0004");
             }
         }
 
@@ -270,7 +274,7 @@ namespace Market.DAL
                 else
                 {
                     _logger.LogWarning("Product with Name: {Name} and Size: {Size} does not exist.", name, size);
-                    throw new Exception("The product with the specified name and size does not exist.");
+                    throw new CustomException(HttpStatusCode.BadRequest, "The product with the specified name and size does not exist.", "0004");
                 }
             }
             catch (Exception ex)
@@ -457,8 +461,8 @@ namespace Market.DAL
             {
                 throw new CustomException(
                     HttpStatusCode.Conflict,
-                    "A product with a similar name and the same size already exists.",
-                    "P005"
+                    "The product is already exists.",
+                    "0004"
                 );
             }
         }
