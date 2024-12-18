@@ -17,35 +17,23 @@ namespace Market.Utilities.MQServices.ManageServices
         private readonly IMQProducer _mQProducer;
         private readonly OperationPredictor _operationPredictor;
         private readonly ILogger<MQManagerService> _logger;
-        private readonly ILogger<ProductServiceBL> Logger;
+        private readonly ILogger<ProductServiceBL> _productServiceLogger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MQManagerService"/> class.
         /// </summary>
         /// <param name="mQProducer">The message producer instance used for sending messages.</param>
         public MQManagerService(
-                IMQProducer mQProducer, 
-                OperationPredictor operationPredictor, 
-                ILogger<MQManagerService> logger
+                IMQProducer mQProducer,
+                OperationPredictor operationPredictor,
+                ILoggerFactory loggerFactory
             )
         {
             _mQProducer = mQProducer;
             _operationPredictor = operationPredictor;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<MQManagerService>();
+            _productServiceLogger = loggerFactory.CreateLogger<ProductServiceBL>();
         }
-
-        public MQManagerService(
-                IMQProducer mQProducer, 
-                OperationPredictor operationPredictor, 
-                ILogger<ProductServiceBL> logger
-            )
-        {
-            _mQProducer = mQProducer;
-            _operationPredictor = operationPredictor;
-            Logger = logger;
-        }
-
-
 
         /// <summary>
         /// Configures and sends a message asynchronously.
@@ -62,6 +50,7 @@ namespace Market.Utilities.MQServices.ManageServices
             );
 
             _logger.LogInformation($"Prediction of the model: {predictedOperation}");
+            _productServiceLogger.LogInformation($"Prediction of the model: {predictedOperation}");
 
             // Validación de parámetros
             if (string.IsNullOrEmpty(logMessage.TransactionName))
