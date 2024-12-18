@@ -437,37 +437,83 @@ namespace Market.DAL
                    lowerSize.Contains("kilogramos") || lowerSize.Contains("mg");
         }
 
+
         private void DuplicateProductCheck(Product product)
         {
-            var productsDuplicated = _context.Products
-                .Where(p => p.ProductName == product.Name)
+            ValidateProduct(product);
+            var normalizedProductName = NormalizeString(product.Name);
+            var normalizedProductSize = NormalizeString(product.Size);
+            var similarProducts = _context.Products
+                .AsEnumerable() 
+                .Where(p => IsSimilar(NormalizeString(p.ProductName), normalizedProductName))
                 .Select(p => new
                 {
-                    p.ProductName,
-                    p.ProductSize
+                    Name = p.ProductName,
+                    Size = NormalizeString(p.ProductSize)
                 })
                 .ToList();
 
-            if(productsDuplicated.Any())
+            if (similarProducts.Any(p => p.Size == normalizedProductSize))
             {
-                foreach(var productsExisted in productsDuplicated)
-                {
-                    ValidateDuplicatedProducts(productsExisted.ProductSize, product.Size);
-                }
+                throw new CustomException(
+                    HttpStatusCode.Conflict,
+                    "A product with a similar name and the same size already exists.",
+                    "P005"
+                );
             }
         }
 
-        private void ValidateDuplicatedProducts(string productSize, string size)
+        private string NormalizeString(string input)
         {
-            if(string.IsNullOrEmpty(size))
-            {
-                throw new CustomException(HttpStatusCode.BadRequest, "Invalid size format.", "0004");
-            }
-            if(productSize == size)
-            {
-                throw new CustomException(HttpStatusCode.BadRequest, "The product is already exists.", "0004");
-            }
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            return Regex.Replace(input.Trim().ToLower(), @"\s+", "");
         }
+
+        private bool IsSimilar(string existingName, string newName, int threshold = 2)
+        {
+            if (existingName.Contains(newName) || newName.Contains(existingName))
+                return true;
+
+            return CalculateLevenshteinDistance(existingName, newName) <= threshold;
+        }
+
+        private int CalculateLevenshteinDistance(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a)) return b.Length;
+            if (string.IsNullOrEmpty(b)) return a.Length;
+
+            var costs = new int[b.Length + 1];
+            for (int j = 0; j < costs.Length; j++)
+                costs[j] = j;
+
+            for (int i = 1; i <= a.Length; i++)
+            {
+                costs[0] = i;
+                int previousCost = i - 1;
+                for (int j = 1; j <= b.Length; j++)
+                {
+                    int currentCost = costs[j];
+                    costs[j] = Math.Min(
+                        Math.Min(costs[j - 1] + 1, costs[j] + 1),
+                        previousCost + (a[i - 1] == b[j - 1] ? 0 : 1));
+                    previousCost = currentCost;
+                }
+            }
+            return costs[b.Length];
+        }
+
+        private void ValidateProduct(Product product)
+        {
+            if (product == null)
+                throw new CustomException(HttpStatusCode.BadRequest, "The product cannot be null.", "P001");
+            if (string.IsNullOrWhiteSpace(product.Name))
+                throw new CustomException(HttpStatusCode.BadRequest, "The product name is required.", "P002");
+            if (string.IsNullOrWhiteSpace(product.Size))
+                throw new CustomException(HttpStatusCode.BadRequest, "The product size is required.", "P003");
+        }
+
         #endregion
     }
 }
