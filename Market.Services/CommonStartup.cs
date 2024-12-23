@@ -57,7 +57,9 @@ namespace MARKETPRODUCT_API
         /// </summary>
         /// <param name="app">The application builder to configure middleware components.</param>
         /// <param name="env">The hosting environment that determines the app's behavior.</param>
-        public static void CommonConfigure(this IApplicationBuilder app, IWebHostEnvironment env)
+        public static void CommonConfigure(
+            this IApplicationBuilder app, 
+            IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -175,7 +177,9 @@ namespace MARKETPRODUCT_API
         /// </summary>
         /// <param name="services">The service container where the database context is registered.</param>
         /// <param name="configuration">The application configuration containing the connection string and other relevant parameters.</param>
-        public static void ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureDatabase(
+            this IServiceCollection services, 
+            IConfiguration configuration)
         {
             string marketProductDBConn = configuration.GetConnectionString(MarketUtilities.DefaultConnection) ?? string.Empty;
             NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

@@ -17,7 +17,10 @@ namespace Market.DAL
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<CartService> _logger;
 
-        public CartService(MarketDbContext dbContext, IHttpContextAccessor httpContextAccessor, ILogger<CartService> logger)
+        public CartService(
+            MarketDbContext dbContext, 
+            IHttpContextAccessor httpContextAccessor, 
+            ILogger<CartService> logger)
         {
             _dbContext = dbContext;
             _httpContextAccessor = httpContextAccessor;

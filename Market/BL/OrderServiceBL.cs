@@ -47,7 +47,10 @@ namespace Market.BL
         /// <param name="productSize">The size of the product to order.</param>
         /// <param name="quantity">The quantity of the product to order.</param>
         /// <returns>The created order DTO.</returns>
-        public async Task<OrderDto> CreateOrderByProductNameAndSizeAsync(string productName, string productSize, int quantity)
+        public async Task<OrderDto> CreateOrderByProductNameAndSizeAsync(
+            string productName, 
+            string productSize, 
+            int quantity)
         {
             try
             {
@@ -103,7 +106,9 @@ namespace Market.BL
         /// </summary>
         /// <param name="productName">The name of the product associated with the order to delete.</param>
         /// <param name="productSize">The size of the product associated with the order to delete.</param>
-        public async Task DeleteOrderByProductNameAndSizeAsync(string productName, string productSize)
+        public async Task DeleteOrderByProductNameAndSizeAsync(
+            string productName, 
+            string productSize)
         {
             try
             {
@@ -161,7 +166,9 @@ namespace Market.BL
         /// <param name="productName">The name of the product associated with the order.</param>
         /// <param name="productSize">The size of the product associated with the order.</param>
         /// <returns>The corresponding order DTO.</returns>
-        public async Task<OrderDto> GetOrderByProductNameAndSizeAsync(string productName, string productSize)
+        public async Task<OrderDto> GetOrderByProductNameAndSizeAsync(
+            string productName, 
+            string productSize)
         {
             try
             {
@@ -181,7 +188,9 @@ namespace Market.BL
         /// </summary>
         /// <param name="id">The ID of the order to update.</param>
         /// <param name="newQuantity">The new quantity for the order.</param>
-        public async Task UpdateOrderQuantityByIdAsync(int id, int newQuantity)
+        public async Task UpdateOrderQuantityByIdAsync(
+            int id, 
+            int newQuantity)
         {
             try
             {
@@ -200,7 +209,9 @@ namespace Market.BL
         /// </summary>
         /// <param name="productId">The ID of the product associated with the order to update.</param>
         /// <param name="newQuantity">The new quantity for the order.</param>
-        public async Task UpdateOrderQuantityByProductIdAsync(int productId, int newQuantity)
+        public async Task UpdateOrderQuantityByProductIdAsync(
+            int productId, 
+            int newQuantity)
         {
             try
             {
@@ -220,7 +231,10 @@ namespace Market.BL
         /// <param name="productName">The name of the product associated with the order to update.</param>
         /// <param name="productSize">The size of the product associated with the order to update.</param>
         /// <param name="newQuantity">The new quantity for the order.</param>
-        public async Task UpdateOrderQuantityByProductNameAndSizeAsync(string productName, string productSize, int newQuantity)
+        public async Task UpdateOrderQuantityByProductNameAndSizeAsync(
+            string productName, 
+            string productSize, 
+            int newQuantity)
         {
             try
             {

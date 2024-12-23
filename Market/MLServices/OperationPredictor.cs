@@ -42,7 +42,11 @@ namespace Market.MLServices
         /// <param name="path">Path of the request (e.g., /products/create).</param>
         /// <param name="queryString">Query string of the request (e.g., ?id=123).</param>
         /// <returns>The predicted operation type as a string.</returns>
-        public string Predict(string method, string host, string path, string queryString)
+        public string Predict(
+            string method, 
+            string host, 
+            string path, 
+            string queryString)
         {
             if (string.IsNullOrWhiteSpace(method) || string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(path))
             {

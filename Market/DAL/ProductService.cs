@@ -119,7 +119,9 @@ namespace Market.DAL
         /// <param name="name">The name of the product.</param>
         /// <param name="size">The size of the product.</param>
         /// <returns></returns>
-        public async Task DeleteProductByNameAndSizeAsync(string name, string size)
+        public async Task DeleteProductByNameAndSizeAsync(
+            string name, 
+            string size)
         {
             _logger.LogDebug("Attempting to delete product with Name: {Name}, Size: {Size}", name, size);
             if (await _productValidationService.ProductExistsByNameAndSizeAsync(name, size))
@@ -181,7 +183,9 @@ namespace Market.DAL
         /// <param name="name">The name of the product.</param>
         /// <param name="size">The size of the product.</param>
         /// <returns>The corresponding product.</returns>
-        public async Task<ProductDto> GetProductByNameAndSizeAsync(string name, string size)
+        public async Task<ProductDto> GetProductByNameAndSizeAsync(
+            string name, 
+            string size)
         {
             _logger.LogDebug("Attempting to retrieve product with Name: {Name} and Size: {Size}.", name, size);
             try
@@ -216,7 +220,9 @@ namespace Market.DAL
         /// <param name="id">The ID of the product to update.</param>
         /// <param name="newDescription">The new description for the product.</param>
         /// <returns></returns>
-        public async Task UpdateDescriptionByIdAsync(int id, string newDescription)
+        public async Task UpdateDescriptionByIdAsync(
+            int id, 
+            string newDescription)
         {
             _logger.LogDebug("Attempting to update description for product with ID: {Id}.", id);
             try
@@ -252,7 +258,10 @@ namespace Market.DAL
         /// <param name="size">The size of the product.</param>
         /// <param name="newDescription">The new description for the product.</param>
         /// <returns></returns>
-        public async Task UpdateDescriptionByNameAndSizeAsync(string name, string size, string newDescription)
+        public async Task UpdateDescriptionByNameAndSizeAsync(
+            string name, 
+            string size, 
+            string newDescription)
         {
             _logger.LogDebug("Attempting to update description for product with Name: {Name} and Size: {Size}.", name, size);
             try

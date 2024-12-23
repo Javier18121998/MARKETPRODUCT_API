@@ -13,7 +13,9 @@ namespace MARKETPRODUCT_API
         /// </summary>
         /// <param name="services">The service collection to which authentication services are added.</param>
         /// <param name="configuration">The application configuration containing JWT settings.</param>
-        public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddJwtAuthentication(
+            this IServiceCollection services, 
+            IConfiguration configuration)
         {
             var jwtKey = configuration["Jwt:Key"];
             if (string.IsNullOrEmpty(jwtKey))

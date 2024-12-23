@@ -14,7 +14,9 @@ namespace Market.Exceptions.Middlewares
     {
         private readonly RequestDelegate _nextDelegate;
         private readonly ILogger<MarketHandlingMiddleware> _logger;
-        public MarketHandlingMiddleware(RequestDelegate nextDelegate, ILogger<MarketHandlingMiddleware> logger)
+        public MarketHandlingMiddleware(
+            RequestDelegate nextDelegate, 
+            ILogger<MarketHandlingMiddleware> logger)
         {
             _nextDelegate = nextDelegate;
             _logger = logger;

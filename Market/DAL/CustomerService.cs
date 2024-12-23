@@ -26,7 +26,10 @@ namespace Market.DAL
         private readonly ILogger<CustomerService> _logger;
         private string errorCode { get; set; } = string.Empty;
 
-        public CustomerService(IOptions<JwtSettings> jwtSettings, MarketDbContext context, ILogger<CustomerService> logger)
+        public CustomerService(
+            IOptions<JwtSettings> jwtSettings, 
+            MarketDbContext context, 
+            ILogger<CustomerService> logger)
         {
             _jwtSettings = jwtSettings.Value;
             _context = context;

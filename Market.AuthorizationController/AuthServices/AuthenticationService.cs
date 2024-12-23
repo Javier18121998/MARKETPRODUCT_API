@@ -23,7 +23,9 @@ namespace Market.AuthorizationController.AuthServices
         /// </summary>
         /// <param name="jwtSettings">JWT configuration settings.</param>
         /// <param name="userService">User service for validating user credentials.</param>
-        public AuthenticationService(IOptions<JwtSettings> jwtSettings, IUserService userService)
+        public AuthenticationService(
+            IOptions<JwtSettings> jwtSettings, 
+            IUserService userService)
         {
             _jwtSettings = jwtSettings.Value;
             _userService = userService;
@@ -35,7 +37,9 @@ namespace Market.AuthorizationController.AuthServices
         /// <param name="username">The username to authenticate.</param>
         /// <param name="password">The password for authentication.</param>
         /// <returns>A JWT token if authentication is successful, otherwise null.</returns>
-        public string Authenticate(string username, string password)
+        public string Authenticate(
+            string username, 
+            string password)
         {
             // Validates user credentials using the user service
             var user = _userService.ValidateUser(username, password);

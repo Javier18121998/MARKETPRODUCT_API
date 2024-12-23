@@ -31,7 +31,10 @@ namespace Market.DAL
         /// <param name="productSize">The size of the product.</param>
         /// <param name="quantity">The quantity to order.</param>
         /// <returns>The created order.</returns>
-        public async Task<OrderDto> CreateOrderByProductNameAndSizeAsync(string productName, string productSize, int quantity)
+        public async Task<OrderDto> CreateOrderByProductNameAndSizeAsync(
+            string productName, 
+            string productSize, 
+            int quantity)
         {
             var product = await _context.Products.FirstOrDefaultAsync(
                 p => p.ProductName == productName &&
@@ -138,7 +141,10 @@ namespace Market.DAL
         /// <param name="productSize">The size of the product.</param>
         /// <param name="newQuantity">The new quantity.</param>
         /// <returns></returns>
-        public async Task UpdateOrderQuantityByProductNameAndSizeAsync(string productName, string productSize, int newQuantity)
+        public async Task UpdateOrderQuantityByProductNameAndSizeAsync(
+            string productName, 
+            string productSize, 
+            int newQuantity)
         {
             if (await _orderValidationService.OrderExistsByProductNameAndSizeAsync(productName, productSize))
             {
@@ -203,7 +209,9 @@ namespace Market.DAL
         /// <param name="productName">The name of the product.</param>
         /// <param name="productSize">The size of the product.</param>
         /// <returns></returns>
-        public async Task DeleteOrderByProductNameAndSizeAsync(string productName, string productSize)
+        public async Task DeleteOrderByProductNameAndSizeAsync(
+            string productName, 
+            string productSize)
         {
             if (await _orderValidationService.OrderExistsByProductNameAndSizeAsync(productName, productSize))
             {
