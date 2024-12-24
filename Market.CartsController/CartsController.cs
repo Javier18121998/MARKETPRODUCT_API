@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Market.DataModels.DTos;
 using Market.DataModels.EFModels;
 using Microsoft.AspNetCore.Authorization;
+using Market.Exceptions;
 
 namespace Market.CartsController
 {
@@ -157,6 +158,21 @@ namespace Market.CartsController
                 _logger.LogError(ex, "Error inesperado al eliminar el producto del carrito.");
                 return StatusCode((int)HttpStatusCode.InternalServerError, "Ocurrió un error inesperado.");
             }
+        }
+
+        [Authorize]
+        [HttpGet("totalpaymentofcart")]
+        public async Task<ActionResult> TotalPaymentOfCart()
+        {
+            try
+            {
+                return Ok();
+            }
+            catch (CustomException cex)
+            {
+                HandleException(cex);
+            }
+            return Ok();
         }
     }
 }

@@ -8,5 +8,6 @@ namespace Market.DAL.IDAL
         Task<Cart> AddItemToCartAsync(string productName, int quantity, string size);
         Task<Cart> GetCustomerCartAsync();
         Task<bool> RemoveItemFromCartAsync(string productName, string size);
+        Task<decimal> TotalPaymentOfCartAsync();
     }
 }
