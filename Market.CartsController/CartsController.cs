@@ -46,7 +46,6 @@ namespace Market.CartsController
 
             try
             {
-                // Llama al servicio para añadir el producto al carrito
                 var result = await _cartService.AddItemToCartAsync(
                     cartItemRequest.ProductName,
                     cartItemRequest.Quantity,
@@ -94,7 +93,6 @@ namespace Market.CartsController
         {
             try
             {
-                // Obtén el carrito actual del cliente
                 var cart = await _cartService.GetCustomerCartAsync();
 
                 if (cart == null)
@@ -138,7 +136,6 @@ namespace Market.CartsController
 
             try
             {
-                // Llama al servicio para eliminar el producto del carrito
                 bool success = await _cartService.RemoveItemFromCartAsync(removeRequest.ProductName, removeRequest.Size);
 
                 if (!success)
@@ -162,17 +159,30 @@ namespace Market.CartsController
 
         [Authorize]
         [HttpGet("totalpaymentofcart")]
+        [SwaggerOperation(
+            Summary = "Obtain the totalpayment of a customer cart.",
+            Description = "Allows to obtain the totalpayment of a customer cart via their customerId."
+        )]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Totalpayment obtained.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Error to obtained cart, there is no cart or no items in cart.")]
+        [SwaggerResponse((int)HttpStatusCode.Unauthorized, "No authorized.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Error server.")]
         public async Task<ActionResult> TotalPaymentOfCart()
         {
             try
             {
-                return Ok();
+                decimal totalPayment = await _cartService.TotalPaymentOfCartAsync();
+                return Ok(totalPayment);
             }
             catch (CustomException cex)
             {
-                HandleException(cex);
+                return HandleException(cex);
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inesperado al eliminar el producto del carrito.");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "Ocurrió un error inesperado.");
+            }
         }
     }
 }
