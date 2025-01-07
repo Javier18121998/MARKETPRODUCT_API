@@ -25,7 +25,7 @@ namespace MARKETPRODUCT_API
     /// Provides centralized methods for configuring and registering 
     /// application services, middleware, and Swagger configurations.
     /// </summary>
-    public static class CommonStartup
+    internal static class CommonStartup
     {
         /// <summary>
         /// Registers common application services into the service collection.
@@ -33,7 +33,7 @@ namespace MARKETPRODUCT_API
         /// message queuing, and user management.
         /// </summary>
         /// <param name="services">The service collection to which services are added.</param>
-        public static void RegisterCommonServices(this IServiceCollection services)
+        internal static void RegisterCommonServices(this IServiceCollection services)
         {
             services.AddScoped<IOrderServiceBL, OrderServiceBL>();
             services.AddScoped<IProductServiceBL, ProductServiceBL>();
@@ -57,7 +57,7 @@ namespace MARKETPRODUCT_API
         /// </summary>
         /// <param name="app">The application builder to configure middleware components.</param>
         /// <param name="env">The hosting environment that determines the app's behavior.</param>
-        public static void CommonConfigure(
+        internal static void CommonConfigure(
             this IApplicationBuilder app, 
             IWebHostEnvironment env)
         {
@@ -93,7 +93,7 @@ namespace MARKETPRODUCT_API
         /// and JWT security settings in Swagger.
         /// </summary>
         /// <param name="services">The service collection to which Swagger services are added.</param>
-        public static void CommonSwaggerConfigurations(this IServiceCollection services)
+        internal static void CommonSwaggerConfigurations(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {
@@ -120,7 +120,6 @@ namespace MARKETPRODUCT_API
                     return string.Equals(apiDesc.GroupName, version, StringComparison.OrdinalIgnoreCase);
                 });
 
-
                 // Configure JWT security for Swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -143,18 +142,19 @@ namespace MARKETPRODUCT_API
                                 Id = "Bearer"
                             }
                         },
-                        new string[] { }
+                        Array.Empty<string>() 
                     }
                 });
             });
         }
+
 
         /// <summary>
         /// Configures API versioning, including the default version, the ability to assume a default version 
         /// if one is not specified, and the inclusion of supported versions in responses.
         /// </summary>
         /// <param name="services">The service container where API versioning services are registered.</param>
-        public static void CommonVersioningApplication(this IServiceCollection services)
+        internal static void CommonVersioningApplication(this IServiceCollection services)
         {
             services.AddApiVersioning(options =>
                 {
@@ -177,7 +177,7 @@ namespace MARKETPRODUCT_API
         /// </summary>
         /// <param name="services">The service container where the database context is registered.</param>
         /// <param name="configuration">The application configuration containing the connection string and other relevant parameters.</param>
-        public static void ConfigureDatabase(
+        internal static void ConfigureDatabase(
             this IServiceCollection services, 
             IConfiguration configuration)
         {

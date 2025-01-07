@@ -192,6 +192,7 @@ namespace Market.DAL
             }
         }
 
+        #region CartService Functionalities and Validations
         /// <summary>
         /// Validates the product and checks if the requested quantity is available in inventory.
         /// </summary>
@@ -243,7 +244,7 @@ namespace Market.DAL
         {
             _logger.LogDebug("Retrieving Customer ID from context.");
             var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null || !user.Identity.IsAuthenticated)
+            if (user == null || user.Identity == null || !user.Identity.IsAuthenticated)
             {
                 _logger.LogError("Unauthenticated user.");
                 throw new UnauthorizedAccessException("Usuario no autenticado.");
@@ -260,6 +261,7 @@ namespace Market.DAL
             _logger.LogDebug("Customer ID retrieved: {CustomerId}.", customerId);
             return customerId;
         }
+
 
         /// <summary>
         /// Retrieves the customer's cart, or creates a new one if it does not exist.
@@ -290,5 +292,6 @@ namespace Market.DAL
 
             return cart;
         }
+        #endregion
     }
 }

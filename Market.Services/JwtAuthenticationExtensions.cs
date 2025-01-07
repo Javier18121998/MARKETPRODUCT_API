@@ -6,14 +6,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace MARKETPRODUCT_API
 {
-    public static class JwtAuthenticationExtensions
+    internal static class JwtAuthenticationExtensions
     {
         /// <summary>
         /// Configures JWT authentication for the application.
         /// </summary>
         /// <param name="services">The service collection to which authentication services are added.</param>
         /// <param name="configuration">The application configuration containing JWT settings.</param>
-        public static void AddJwtAuthentication(
+        internal static void AddJwtAuthentication(
             this IServiceCollection services, 
             IConfiguration configuration)
         {
@@ -48,7 +48,7 @@ namespace MARKETPRODUCT_API
         /// Configures dependency injection for authentication-related services.
         /// </summary>
         /// <param name="services">The service collection to which JWT services are added.</param>
-        public static void JwtBearerServices(this IServiceCollection services)
+        internal static void JwtBearerServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
         }
@@ -61,7 +61,7 @@ namespace MARKETPRODUCT_API
         /// <param name="services">
         /// The service collection where the CORS configuration is registered.
         /// </param>
-        public static void CommonCorsConfigurations(this IServiceCollection services)
+        internal static void CommonCorsConfigurations(this IServiceCollection services)
         {
             services.AddCors(options =>
             {

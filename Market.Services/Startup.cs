@@ -7,7 +7,7 @@ namespace MARKETPRODUCT_API
     /// Configures services and middleware components for the MARKETPRODUCT_API application.
     /// This class handles dependency injection and sets up the necessary configurations for services.
     /// </summary>
-    public class Startup
+    internal class Startup
     {
         /// <summary>
         /// Initializes a new instance of the Startup class with the specified configuration.

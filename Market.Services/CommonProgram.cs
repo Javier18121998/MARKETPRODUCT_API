@@ -5,7 +5,7 @@ using Microsoft.ML;
 
 namespace Market.Services
 {
-    public static class CommonProgram
+    internal static class CommonProgram
     {
         private static readonly ILogger _logger;
 
@@ -17,7 +17,7 @@ namespace Market.Services
             }).CreateLogger("CommonProgram");
         }
 
-        public static void CommonMainPrediction()
+        internal static void CommonMainPrediction()
         {
             #region Loading the training data
             var mlContext = new MLContext();

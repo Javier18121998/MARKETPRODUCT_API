@@ -203,7 +203,7 @@ namespace Market.DAL
                         {
                             customerProperty.SetValue(customerData, newValue);
                         }
-                        catch (ArgumentException ex)
+                        catch (ArgumentException)
                         {
                             errorCode = "MKPT00004";
                             throw new CustomException(HttpStatusCode.BadRequest, $"Error updating {property.Name}: Type mismatch.", errorCode);
@@ -271,6 +271,7 @@ namespace Market.DAL
             }
         }
 
+        #region Customer ended process and retrieval data encryption
         private async Task DeletingCustomerDataAsync(int customerId)
         {
             var customerData = await _context.customerData.FindAsync(customerId);
@@ -354,5 +355,6 @@ namespace Market.DAL
 
             return true;
         }
+        #endregion
     }
 }
