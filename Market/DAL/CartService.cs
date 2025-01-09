@@ -17,7 +17,7 @@ namespace Market.DAL
     /// </summary>
     public class CartService : ICartService
     {
-        private readonly MarketDbContext _dbContext;
+        private readonly MarketDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<CartService> _logger;
 
@@ -28,11 +28,11 @@ namespace Market.DAL
         /// <param name="httpContextAccessor">The HTTP context accessor for retrieving customer data.</param>
         /// <param name="logger">The logger for logging cart operations.</param>
         public CartService(
-            MarketDbContext dbContext,
+            MarketDbContext context,
             IHttpContextAccessor httpContextAccessor,
             ILogger<CartService> logger)
         {
-            _dbContext = dbContext;
+            _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
@@ -60,7 +60,7 @@ namespace Market.DAL
                 if (existingItem != null)
                 {
                     existingItem.Quantity += quantity;
-                    _dbContext.CartItem.Update(existingItem);
+                    _context.CartItem.Update(existingItem);
                 }
                 else
                 {
@@ -71,14 +71,14 @@ namespace Market.DAL
                         Quantity = quantity,
                         Size = size
                     };
-                    await _dbContext.CartItem.AddAsync(cartItem);
+                    await _context.CartItem.AddAsync(cartItem);
                     cart.Items.Add(cartItem);
                 }
 
                 await UpdateInventoryAsync(product.Id, -quantity);
 
                 cart.UpdatedAt = DateTime.UtcNow;
-                await _dbContext.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 _logger.LogDebug("Item added to cart successfully: Product={ProductName}, Quantity={Quantity}, Size={Size}.", productName, quantity, size);
                 return cart;
@@ -100,7 +100,7 @@ namespace Market.DAL
             try
             {
                 var customerId = GetCustomerIdFromContext();
-                var cart = await _dbContext.Cart
+                var cart = await _context.Cart
                     .Include(c => c.Items)
                     .ThenInclude(i => i.Product)
                     .FirstOrDefaultAsync(c => c.CustomerId == customerId);
@@ -131,7 +131,7 @@ namespace Market.DAL
             try
             {
                 var customerId = GetCustomerIdFromContext();
-                var cart = await _dbContext.Cart
+                var cart = await _context.Cart
                     .Include(c => c.Items)
                     .FirstOrDefaultAsync(c => c.CustomerId == customerId);
 
@@ -149,8 +149,8 @@ namespace Market.DAL
                 }
 
                 await UpdateInventoryAsync(cartItem.ProductId, cartItem.Quantity);
-                _dbContext.CartItem.Remove(cartItem);
-                await _dbContext.SaveChangesAsync();
+                _context.CartItem.Remove(cartItem);
+                await _context.SaveChangesAsync();
 
                 _logger.LogDebug("Item removed from cart successfully: Product={ProductName}, Size={Size}.", productName, size);
                 return true;
@@ -171,7 +171,7 @@ namespace Market.DAL
             try
             {
                 var customerId = GetCustomerIdFromContext();
-                var cart = await _dbContext.Cart
+                var cart = await _context.Cart
                     .Include(c => c.Items)
                     .ThenInclude(i => i.Product)
                     .FirstOrDefaultAsync(c => c.CustomerId == customerId);
@@ -203,11 +203,11 @@ namespace Market.DAL
         /// <exception cref="InvalidOperationException">Thrown when there is insufficient inventory.</exception>
         private async Task<ProductDto> ValidateAndGetProductAsync(string productName, int quantity)
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductName == productName);
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductName == productName);
             if (product == null)
                 throw new ArgumentException($"El producto '{productName}' no existe.");
 
-            var inventory = await _dbContext.Orders
+            var inventory = await _context.Orders
                 .Where(o => o.ProductId == product.Id)
                 .SumAsync(o => o.Quantity);
 
@@ -224,7 +224,7 @@ namespace Market.DAL
         /// <param name="quantityDelta">The change in inventory quantity (positive or negative).</param>
         private async Task UpdateInventoryAsync(int productId, int quantityDelta)
         {
-            var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.ProductId == productId);
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.ProductId == productId);
             if (order == null)
                 throw new InvalidOperationException($"No se encontró inventario para el producto ID: {productId}.");
 
@@ -232,7 +232,7 @@ namespace Market.DAL
             if (order.Quantity < 0)
                 throw new InvalidOperationException($"Cantidad insuficiente en inventario para el producto ID: {productId}.");
 
-            _dbContext.Orders.Update(order);
+            _context.Orders.Update(order);
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace Market.DAL
         private async Task<Cart> GetOrCreateCartAsync(int customerId)
         {
             _logger.LogDebug("Retrieving or creating cart for Customer ID: {CustomerId}.", customerId);
-            var cart = await _dbContext.Cart
+            var cart = await _context.Cart
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.CustomerId == customerId);
 
@@ -285,8 +285,8 @@ namespace Market.DAL
                     UpdatedAt = DateTime.UtcNow
                 };
 
-                await _dbContext.Cart.AddAsync(cart);
-                await _dbContext.SaveChangesAsync();
+                await _context.Cart.AddAsync(cart);
+                await _context.SaveChangesAsync();
                 _logger.LogDebug("New cart created successfully for Customer ID: {CustomerId}.", customerId);
             }
 
